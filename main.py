@@ -2,37 +2,32 @@ import curses
 import sys
 import time
 
-def initkey(win):
-    win.addstr(2,  2, "key",  curses.A_BOLD)
-    win.addstr(2, 12, "code", curses.A_STANDOUT)
-    win.box()
+import panel
 
-def showkey(win, key):
-    oldbkgd = win.getbkgd()
-    win.move(3, 2)
-    win.clrtoeol()
-    win.bkgdset(ord(' '), curses.A_NORMAL)
-    try:
-        win.addstr(3, 2, chr(key), curses.A_NORMAL)
-    except ValueError:
-        pass
-    win.addstr(3, 12, str(key), curses.A_NORMAL)
-    win.bkgdset(oldbkgd)
-    win.refresh()
+class LinePanel(panel.Panel):
+    def draw(self, height, width):
+        self.win.box()
+        (y, x) = self.win.getmaxyx()
+        self.addstr(1, 1, str(y))
+        self.addstr(2, 1, str(x))
+        self.hline(self.height-2, 0, self.width)
+
+class MainPanel(panel.Panel):
+    def draw(self, height, width):
+        (y, x) = self.win.getmaxyx()
+        self.addstr(1, 1, str(y))
+        self.addstr(2, 1, str(x))
 
 def main(stdscr, *main_args):
     curses.curs_set(0)
-    s1 = stdscr.subwin(10, 10, 20, 13)
-    s2 = stdscr.subwin(14, 25, 18, 15)
-    s1.bkgd(ord(' '), curses.A_REVERSE)
-    s2.bkgd(ord(' '), curses.A_REVERSE)
-    initkey(stdscr)
-    s1.addstr(0, 0, "hallo1")
-    s2.addstr(0, 0, "hallo2")
-
-    while True:
+    p = MainPanel(stdscr)
+    q = LinePanel(stdscr, 10, 10, 40, 50)
+    r = LinePanel(stdscr,  7, 13, 40, 50)
+    while 1:
+        p.redraw()
+        q.redraw()
+        r.redraw()
         key = stdscr.getch()
-        showkey(stdscr, key)
 
 if __name__=='__main__':
     main_args = sys.argv

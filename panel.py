@@ -1,14 +1,20 @@
 import curses
 
 class Panel:
-    def __init__(self, parent, top, left, height, width):
+    def __init__(self, parent, top=0, left=0, height=None, width=None):
         self.parent = parent
-        self.win = None
+        p_height, p_width = parent.getmaxyx()
 
         self.top = top
         self.left = left
-        self.height = height
-        self.width = width
+        self.height = p_height-top if height is None else height
+        self.width = p_width-left if width is None else width
+
+        self.win = None
+
+
+    def handle_key(self, key):
+        raise NotImplementedError
 
             
     def draw(self, height, width):
@@ -22,36 +28,70 @@ class Panel:
         #  
         #        A vis_height
         #        |
-        # height + . . . . . . ,------
-        #        |            / .     
-        #        |           /  .     
-        #        |          /   .     
-        #        |         /    .     
-        #        |        /     .     
-        #      0 +-------´      .     
-        #        L-------+------+-----------> max_height
-        #                top    top+height
+        # height + . . . . . . *******
+        #        |            *.     
+        #        |           * .     
+        #        |          *  .     
+        #        |         *   .     
+        #        |        *    .     
+        #      0 +********     .     
+        #        L-------+-----+-----------> max_height
+        #                top   top+height
 
         if vis_height == 0 or vis_width == 0:
             self.win = None
             return
 
         if self.win is None:
-            recreate = True
-        else: # self.win exists
-            sub_height, sub_width = self.win.getmaxyx()
-            sub_top,    sub_left  = self.win.getparyx()
-
-            recreate = any(sub_height != vis_height,
-                           sub_width  != vis_width,
-                           sub_top    != self.top,
-                           sub_left   != self.left)
-        if recreate:
             self.win = self.parent.subwin(vis_height, vis_width,
                                           self.top, self.left)
+        else:
+            # subwindow shrinks automatically, but does not grow
+            sub_height, sub_width = self.win.getmaxyx()
+            grow = any([sub_height < vis_height,
+                        sub_width  < vis_width,
+                       ])
+            if grow:
+                self.win.resize(vis_height, vis_width)
+
+            #sub_top, sub_left = self.win.getparyx()
+            #moved = any([sub_top  != self.top, # ?
+            #             sub_left != self.left # ?
+            #            ])
+
         self.win.erase()
         self.draw(vis_height, vis_width)
         self.win.refresh()
 
+
+    def hline(self, y, x, length, attr=curses.A_NORMAL):
+        if self.win:
+            try:
+                self.win.hline(y, x, curses.ACS_HLINE|attr, length)
+            except curses.error:
+                pass
+
+
+    def vline(self, y, x, length, attr=curses.A_NORMAL):
+        if self.win:
+            try:
+                self.win.vline(y, x, curses.ACS_VLINE|attr, length)
+            except curses.error:
+                pass
+
                             
+    def addch(self, y, x, char, attr=curses.A_NORMAL):
+        if self.win:
+            try:
+                self.win.addch(y, x, char, attr)
+            except curses.error:
+                pass
+
+                            
+    def addstr(self, y, x, string, attr=curses.A_NORMAL):
+        if self.win:
+            try:
+                self.win.addstr(y, x, string, attr)
+            except curses.error:
+                pass
 
