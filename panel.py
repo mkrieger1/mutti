@@ -17,7 +17,7 @@ class Panel:
         raise NotImplementedError
 
             
-    def draw(self, height, width):
+    def draw(self):
         raise NotImplementedError
 
 
@@ -60,7 +60,7 @@ class Panel:
             #            ])
 
         self.win.erase()
-        self.draw(vis_height, vis_width)
+        self.draw()
         self.win.refresh()
 
 
