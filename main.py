@@ -2,32 +2,26 @@ import curses
 import sys
 import time
 
-import panel
+from dial import Dial, DialList
 
-class LinePanel(panel.Panel):
-    def draw(self, height, width):
-        self.win.box()
-        (y, x) = self.win.getmaxyx()
-        self.addstr(1, 1, str(y))
-        self.addstr(2, 1, str(x))
-        self.hline(self.height-2, 0, self.width)
-
-class MainPanel(panel.Panel):
-    def draw(self, height, width):
-        (y, x) = self.win.getmaxyx()
-        self.addstr(1, 1, str(y))
-        self.addstr(2, 1, str(x))
 
 def main(stdscr, *main_args):
     curses.curs_set(0)
-    p = MainPanel(stdscr)
-    q = LinePanel(stdscr, 10, 10, 40, 50)
-    r = LinePanel(stdscr,  7, 13, 40, 50)
+
+    stdscr.box()
+    d = DialList(stdscr, (4, 6))
+    for i in range(5):
+        d.add_dial(("Dial %02i"%i, 8), (2*i, 4), (-100, 100))
+
     while 1:
-        p.redraw()
-        q.redraw()
-        r.redraw()
+        d.redraw()
+        curses.doupdate()
         key = stdscr.getch()
+        if key == ord('q'):
+            break
+        else:
+            d.handle_key(key)
+            
 
 if __name__=='__main__':
     main_args = sys.argv

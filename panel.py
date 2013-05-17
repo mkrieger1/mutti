@@ -1,14 +1,21 @@
 import curses
 
 class Panel:
-    def __init__(self, parent, top=0, left=0, height=None, width=None):
+    def __init__(self, parent, pos=None, size=None):
         self.parent = parent
         p_height, p_width = parent.getmaxyx()
 
-        self.top = top
-        self.left = left
-        self.height = p_height-top if height is None else height
-        self.width = p_width-left if width is None else width
+        if pos is None:
+            self.top = 0
+            self.left = 0
+        else:
+            self.top, self.left = pos
+
+        if size is None:
+            self.height = p_height - self.top
+            self.width  = p_width - self.left
+        else:
+            self.height, self.width = size
 
         self.win = None
 
@@ -61,7 +68,7 @@ class Panel:
 
         self.win.erase()
         self.draw()
-        self.win.refresh()
+        self.win.noutrefresh()
 
 
     def hline(self, y, x, length, attr=curses.A_NORMAL):
