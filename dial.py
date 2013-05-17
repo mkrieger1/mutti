@@ -1,12 +1,14 @@
 import curses
-import panel
+from panel import Panel
 
-class Dial(panel.Panel):
+class Dial(Panel):
+    """A widget to display and manipulate one numeric value."""
+
     def __init__(self, parent, pos, label, value, vrange):
         self.label_width = label[1]
         self.value_digits = value[1]
         width = self.label_width + self.value_digits
-        panel.Panel.__init__(self, parent, pos, (1, width))
+        Panel.__init__(self, parent, pos, (1, width))
 
         self.vmin, self.vmax = vrange
         self.step = 10
@@ -14,7 +16,6 @@ class Dial(panel.Panel):
 
         self.label_text = label[0]
         self.focus = False
-
 
     def set(self, value):
         if value > self.vmax:
@@ -30,13 +31,19 @@ class Dial(panel.Panel):
     def dec(self, amount):
         self.set(self.value-amount)
 
+    def get_status(self):
+        bar_len = 20
+        bar_pos = (self.value-self.vmin)*bar_len/(self.vmax-self.vmin)
+        bar = '='*bar_pos + '-'*(bar_len-bar_pos)
+        return ' '.join([self.label_text,
+                         str(self.value).rjust(self.value_digits),
+                         bar])
 
     def draw(self):
         self.addstr(0, 0, self.label_text)
         self.addstr(0, self.label_width,
                     str(self.value).rjust(self.value_digits),
                     curses.A_REVERSE if self.focus else curses.A_NORMAL)
-
 
     def handle_key(self, key):
         if key is None:
@@ -53,9 +60,11 @@ class Dial(panel.Panel):
             return key
 
 
-class DialList(panel.Panel):
+class DialList(Panel):
+    """A widget to display and manipulate multiple numeric values."""
+
     def __init__(self, parent, pos):
-        panel.Panel.__init__(self, parent, pos, (0, 0))
+        Panel.__init__(self, parent, pos, (0, 0))
         self.dials = []
         self.focused = 0
 
@@ -77,6 +86,9 @@ class DialList(panel.Panel):
         self.focused = (self.focused - 1) % len(self.dials)
         self.dials[self.focused].focus = True
 
+    def get_status(self):
+        return self.dials[self.focused].get_status()
+
     def draw(self):
         for d in self.dials:
             d.redraw()
@@ -84,9 +96,9 @@ class DialList(panel.Panel):
     def handle_key(self, key):
         if key is None:
             return
-        elif key == curses.KEY_DOWN:
+        elif key in [curses.KEY_DOWN, ord('j')]:
             self.focus_next()
-        elif key == curses.KEY_UP:
+        elif key in [curses.KEY_UP, ord('k')]:
             self.focus_prev()
         else:
             return self.dials[self.focused].handle_key(key)

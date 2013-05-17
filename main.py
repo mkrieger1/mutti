@@ -3,6 +3,7 @@ import sys
 import time
 
 from dial import Dial, DialList
+from status import Status
 
 
 def main(stdscr, *main_args):
@@ -12,9 +13,12 @@ def main(stdscr, *main_args):
     d = DialList(stdscr, (4, 6))
     for i in range(5):
         d.add_dial(("Dial %02i"%i, 8), (2*i, 4), (-100, 100))
+    s = Status(stdscr, (stdscr.getmaxyx()[0]-1, 0))
 
     while 1:
+        s.set(d.get_status())
         d.redraw()
+        s.redraw()
         curses.doupdate()
         key = stdscr.getch()
         if key == ord('q'):
