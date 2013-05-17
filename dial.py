@@ -76,15 +76,16 @@ class DialList(Panel):
         self.height = len(self.dials)
         self.width = max(d.width for d in self.dials)
 
-    def focus_next(self):
+    def set_focus(self, i):
         self.dials[self.focused].focus = False
-        self.focused = (self.focused + 1) % len(self.dials)
+        self.focused = i % len(self.dials)
         self.dials[self.focused].focus = True
 
+    def focus_next(self):
+        self.set_focus(self.focused + 1)
+
     def focus_prev(self):
-        self.dials[self.focused].focus = False
-        self.focused = (self.focused - 1) % len(self.dials)
-        self.dials[self.focused].focus = True
+        self.set_focus(self.focused - 1)
 
     def get_status(self):
         return self.dials[self.focused].get_status()
@@ -96,6 +97,8 @@ class DialList(Panel):
     def handle_key(self, key):
         if key is None:
             return
+        elif key in map(ord, map(str, range(1, len(self.dials)+1))):
+            self.set_focus(int(chr(key))-1)
         elif key in [curses.KEY_DOWN, ord('j')]:
             self.focus_next()
         elif key in [curses.KEY_UP, ord('k')]:
