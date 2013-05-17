@@ -1,4 +1,5 @@
 import curses
+import curses.textpad
 from panel import Panel
 
 class Dial(Panel):
@@ -38,6 +39,19 @@ class Dial(Panel):
         return ' '.join([self.label_text,
                          str(self.value).rjust(self.value_digits),
                          bar])
+
+    def text_input(self):
+        (y, x) = self.win.getparyx()
+        editwin = curses.newwin(1, self.value_digits+1,
+                                y, x+self.width-self.value_digits) 
+        b = curses.textpad.Textbox(editwin)
+        curses.curs_set(1)
+        b.edit()
+        curses.curs_set(0)
+        try:
+            self.set(int(b.gather()))
+        except ValueError:
+            pass
 
     def draw(self):
         self.addstr(0, 0, self.label_text)
@@ -103,6 +117,9 @@ class DialList(Panel):
             self.focus_next()
         elif key in [curses.KEY_UP, ord('k')]:
             self.focus_prev()
+        elif key == ord('s'):
+            self.dials[self.focused].text_input()
+            self.focus_next()
         else:
             return self.dials[self.focused].handle_key(key)
 
