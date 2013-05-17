@@ -1,3 +1,5 @@
+import curses
+
 def initkey(win):
     win.addstr(2,  2, "key",  curses.A_BOLD)
     win.addstr(2, 12, "code", curses.A_STANDOUT)
@@ -15,4 +17,18 @@ def showkey(win, key):
     win.addstr(3, 12, str(key), curses.A_NORMAL)
     win.bkgdset(oldbkgd)
     win.refresh()
+
+
+def main(stdscr):
+    curses.curs_set(0)
+    initkey(stdscr)
+    while 1:
+        key = stdscr.getch()
+        showkey(stdscr, key)
+
+if __name__=='__main__':
+    try:
+        curses.wrapper(main)
+    except KeyboardInterrupt:
+        pass
 
