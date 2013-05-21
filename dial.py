@@ -34,8 +34,9 @@ class Dial(Panel):
 
     def get_status(self):
         bar_len = 20
-        bar_pos = (self.value-self.vmin)*bar_len/(self.vmax-self.vmin)
-        bar = '='*bar_pos + '-'*(bar_len-bar_pos)
+        bar_pos = ((self.value - self.vmin) * bar_len / 
+                   (self.vmax  - self.vmin))
+        bar = '#'*bar_pos + '-'*(bar_len-bar_pos)
         return ' '.join([self.label_text,
                          str(self.value).rjust(self.value_digits),
                          bar])
