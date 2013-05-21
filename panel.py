@@ -17,7 +17,8 @@ class Panel:
         else:
             self.height, self.width = size
 
-        self.win = None
+        self.win = self.parent.derwin(self.height, self.width,
+                                      self.top, self.left)
 
 
     def handle_key(self, key):
@@ -46,12 +47,8 @@ class Panel:
         #                top   top+height
 
         if vis_height == 0 or vis_width == 0:
-            self.win = None
             return
 
-        if self.win is None:
-            self.win = self.parent.subwin(vis_height, vis_width,
-                                          self.top, self.left)
         else:
             # subwindow shrinks automatically, but does not grow
             sub_height, sub_width = self.win.getmaxyx()
@@ -60,11 +57,6 @@ class Panel:
                        ])
             if grow:
                 self.win.resize(vis_height, vis_width)
-
-            #sub_top, sub_left = self.win.getparyx()
-            #moved = any([sub_top  != self.top, # ?
-            #             sub_left != self.left # ?
-            #            ])
 
         self.win.erase()
         self.draw()

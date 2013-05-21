@@ -8,7 +8,7 @@ class Dial(Panel):
     def __init__(self, parent, pos, label, value, vrange):
         self.label_width = label[1]
         self.value_digits = value[1]
-        width = self.label_width + self.value_digits
+        width = self.label_width + self.value_digits + 1
         Panel.__init__(self, parent, pos, (1, width))
 
         self.vmin, self.vmax = vrange
@@ -42,9 +42,9 @@ class Dial(Panel):
                          bar])
 
     def text_input(self):
-        (y, x) = self.win.getparyx()
-        editwin = curses.newwin(1, self.value_digits+1,
-                                y, x+self.width-self.value_digits) 
+        editwin = self.win.derwin(1, self.value_digits+1,
+                                  0, self.label_width)
+        editwin.clrtoeol()
         b = curses.textpad.Textbox(editwin)
         curses.curs_set(1)
         b.edit()
@@ -84,8 +84,8 @@ class DialList(Panel):
         self.focused = 0
 
     def add_dial(self, label, value, vrange):
-        pos = (self.top+self.height, self.left)
-        d = Dial(self.parent, pos, label, value, vrange)
+        pos = (len(self.dials)+1, 0)
+        d = Dial(self.win, pos, label, value, vrange)
         self.dials.append(d)
         self.dials[self.focused].focus = True
         self.height = len(self.dials)
