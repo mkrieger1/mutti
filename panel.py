@@ -20,6 +20,15 @@ class Panel:
         self.win = self.parent.derwin(self.height, self.width,
                                       self.top, self.left)
 
+        self.is_focused = False
+
+
+    def _focus(self):
+        self.is_focused = True
+
+    def _defocus(self):
+        self.is_focused = False
+
 
     def handle_key(self, key):
         raise NotImplementedError
