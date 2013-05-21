@@ -14,5 +14,5 @@ class Status(Panel):
 
     def draw(self):
         self.win.bkgd(' ', curses.A_REVERSE)
-        self.addstr(0, 1, self.text)
+        self.addstr(0, 0, self.text)
 

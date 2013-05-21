@@ -16,7 +16,7 @@ def main(stdscr, *main_args):
     s = Status(stdscr, (stdscr.getmaxyx()[0]-1, 0))
 
     while 1:
-        s.set(d.get_status())
+        d.set_status(s)
         d.redraw()
         s.redraw()
         curses.doupdate()

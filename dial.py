@@ -32,14 +32,17 @@ class Dial(Panel):
     def dec(self, amount):
         self.set(self.value-amount)
 
-    def get_status(self):
+    def set_status(self, statuspanel):
         bar_len = 20
         bar_pos = ((self.value - self.vmin) * bar_len / 
                    (self.vmax  - self.vmin))
         bar = '#'*bar_pos + '-'*(bar_len-bar_pos)
-        return ' '.join([self.label_text,
+        left = ' '.join([self.label_text,
                          str(self.value).rjust(self.value_digits),
                          bar])
+        right = '+/-, PageUp/PageDn to change, S to type'
+        padding = ' '*(statuspanel.width-len(left)-len(right))
+        statuspanel.set(left + padding + right)
 
     def text_input(self):
         editwin = self.win.derwin(1, self.value_digits+1,
@@ -102,8 +105,8 @@ class DialList(Panel):
     def focus_prev(self):
         self.set_focus(self.focused - 1)
 
-    def get_status(self):
-        return self.dials[self.focused].get_status()
+    def set_status(self, statuspanel):
+        self.dials[self.focused].set_status(statuspanel)
 
     def draw(self):
         for d in self.dials:
