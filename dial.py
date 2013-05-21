@@ -81,9 +81,10 @@ class Dial(Panel):
 class DialList(Panel):
     """A widget to display and manipulate multiple numeric values."""
 
-    def __init__(self, parent, pos):
+    def __init__(self, parent, pos, title):
         Panel.__init__(self, parent, pos, (0, 0))
         self.dials = []
+        self.title = title
         self.focused = 0
 
     def add_dial(self, label, value, vrange):
@@ -91,8 +92,8 @@ class DialList(Panel):
         d = Dial(self.win, pos, label, value, vrange)
         self.dials.append(d)
         self.dials[self.focused].focus = True
-        self.height = len(self.dials)
-        self.width = max(d.width for d in self.dials)
+        self.height = len(self.dials)+1
+        self.width = max([d.width for d in self.dials] + [len(self.title)])
 
     def set_focus(self, i):
         self.dials[self.focused].focus = False
@@ -109,6 +110,7 @@ class DialList(Panel):
         self.dials[self.focused].set_status(statuspanel)
 
     def draw(self):
+        self.addstr(0, 0, self.title, curses.A_BOLD)
         for d in self.dials:
             d.redraw()
 
