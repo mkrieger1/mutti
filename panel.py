@@ -1,9 +1,15 @@
 import curses
 
+
+class PanelError(Exception):
+    pass
+
+
 class Panel:
     def __init__(self, min_height=None, min_width=None,
                        max_height=None, max_width=None, win=None):
-        """Specify minimum/maximum size and optionally set the window.
+        """
+        Specify minimum/maximum size and optionally set the window.
         
         If minimum/maximum size are not given, they default to (0, 0) and
         the available size in the window, respectively.
@@ -21,19 +27,29 @@ class Panel:
 
         self.parent = None
         self.children = []
+        self.focused_child = None
+        self.has_focus = False
 
 
-    def adopt(self, child, height=None, width=None, top=None, left=None):
-        """Declare a panel as child and create a subwindow for it.
+    def adopt(self, child):
+        """
+        Declare a panel as child.
+        """
+        self.children.append(child)
+        child.parent = self
+        self._need_layout = True
+
+
+    def give_window(self, child, height=None, width=None,
+                                 top=None, left=None,
+                                 align_ver='top', align_hor='left'):
+        """
+        Create a subwindow for a child.
 
         height, width, top, and left specify the area in the parent window
         that is allowed to be used, if they are not given, the maximum
         available space is used (if needed).
         """
-
-        self.children.append(child)
-        child.parent = self
-
         if top is None:
             top = 0
         if left is None:
@@ -44,74 +60,86 @@ class Panel:
             width = self.win.getmaxyx()[1]-left
 
         if height < child.min_height:
-            raise ValueError('need at least %i columns' % child.min_height)
+            #raise PanelError('need at least %i columns' % child.min_height)
+            # deal with it!
+            pass
         if width < child.min_width:
-            raise ValueError('need at least %i rows' % child.min_width)
+            #raise PanelError('need at least %i rows' % child.min_width)
+            # deal with it!
+            pass
 
         if child.max_height is not None:
             height = min(height, child.max_height)
+            remaining_height = height - child.max_height
+            top += {'top':    0,
+                    'center': remaining_height/2,
+                    'bottom': remaining_height
+                   }[align_ver]
         if child.max_width is not None:
             width = min(width, child.max_width)
+            remaining_width = width - child.max_width
+            left += {'left':   0,
+                     'center': remaining_width/2,
+                     'right':  remaining_width
+                    }[align_hor]
 
         child.win = self.win.derwin(height, width, top, left)
+        child._need_layout = True
+
 
 
     def handle_key(self, key):
+        if key == curses.KEY_RESIZE:
+            self._need_layout = True
+            return
+        if self.focused_child:
+            key = self.focused_child.handle_key(key)
+        if key is not None:
+            return self._handle_key(key)
+
+    def _handle_key(self, key):
+        """
+        Do something depending on the key, or return the key.
+
+        """
         raise NotImplementedError
 
-            
-    def draw(self):
-        raise NotImplementedError
 
 
     def redraw(self):
-        max_height, max_width = self.parent.getmaxyx()
-        vis_height = min(self.height, max(max_height - self.top,  0))
-        vis_width  = min(self.width,  max(max_width  - self.left, 0))
-        #  
-        #        A vis_height
-        #        |
-        # height + . . . . . . *******
-        #        |            *.     
-        #        |           * .     
-        #        |          *  .     
-        #        |         *   .     
-        #        |        *    .     
-        #      0 +********     .     
-        #        L-------+-----+-----------> max_height
-        #                top   top+height
-
-        if vis_height == 0 or vis_width == 0:
+        """
+        Redraw the panel and all children.
+        """
+        height, width = self.win.getmaxyx()
+        if height == 0 or width == 0:
             return
 
-        else:
-            # subwindow shrinks automatically, but does not grow
-            sub_height, sub_width = self.win.getmaxyx()
-            grow = any([sub_height < vis_height,
-                        sub_width  < vis_width,
-                       ])
-            if grow:
-                self.win.resize(vis_height, vis_width)
+        if self._need_layout:
+            self._layout(height, width)
+        self._need_layout = False
 
         self.win.erase()
-        self.draw()
+        for child in self.children:
+            child.redraw()
+        self._draw(height, width)
         self.win.noutrefresh()
 
+    def _layout(self, height, width):
+        """
+        Given the window size, create subwindows for the children.
 
-    def hline(self, y, x, length, attr=curses.A_NORMAL):
-        if self.win:
-            try:
-                self.win.hline(y, x, curses.ACS_HLINE|attr, length)
-            except curses.error:
-                pass
+        This should also handle which children are visible, in case the
+        window is too small.
+        """
+        raise NotImplementedError
+            
+    def _draw(self, height, width):
+        """
+        Given the window size, draw the panel.
+        """
+        raise NotImplementedError
 
 
-    def vline(self, y, x, length, attr=curses.A_NORMAL):
-        if self.win:
-            try:
-                self.win.vline(y, x, curses.ACS_VLINE|attr, length)
-            except curses.error:
-                pass
 
                             
     def addch(self, y, x, char, attr=curses.A_NORMAL):
