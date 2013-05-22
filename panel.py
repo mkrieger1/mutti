@@ -1,33 +1,59 @@
 import curses
 
 class Panel:
-    def __init__(self, parent, pos=None, size=None):
-        self.parent = parent
-        p_height, p_width = parent.getmaxyx()
+    def __init__(self, min_height=None, min_width=None,
+                       max_height=None, max_width=None, win=None):
+        """Specify minimum/maximum size and optionally set the window.
+        
+        If minimum/maximum size are not given, they default to (0, 0) and
+        the available size in the window, respectively.
+        """
+        if min_height is None:
+            min_height = 0
+        if min_width is None:
+            min_width = 0
+        self.min_height = min_height
+        self.min_width = min_width
+        self.max_height = max_height
+        self.max_width = max_width
 
-        if pos is None:
-            self.top = 0
-            self.left = 0
-        else:
-            self.top, self.left = pos
+        self.win = win
 
-        if size is None:
-            self.height = p_height - self.top
-            self.width  = p_width - self.left
-        else:
-            self.height, self.width = size
-
-        self.win = self.parent.derwin(self.height, self.width,
-                                      self.top, self.left)
-
-        self.is_focused = False
+        self.parent = None
+        self.children = []
 
 
-    def _focus(self):
-        self.is_focused = True
+    def adopt(self, child, height=None, width=None, top=None, left=None):
+        """Declare a panel as child and create a subwindow for it.
 
-    def _defocus(self):
-        self.is_focused = False
+        height, width, top, and left specify the area in the parent window
+        that is allowed to be used, if they are not given, the maximum
+        available space is used (if needed).
+        """
+
+        self.children.append(child)
+        child.parent = self
+
+        if top is None:
+            top = 0
+        if left is None:
+            left = 0
+        if height is None:
+            height = self.win.getmaxyx()[0]-top
+        if width is None:
+            width = self.win.getmaxyx()[1]-left
+
+        if height < child.min_height:
+            raise ValueError('need at least %i columns' % child.min_height)
+        if width < child.min_width:
+            raise ValueError('need at least %i rows' % child.min_width)
+
+        if child.max_height is not None:
+            height = min(height, child.max_height)
+        if child.max_width is not None:
+            width = min(width, child.max_width)
+
+        child.win = self.win.derwin(height, width, top, left)
 
 
     def handle_key(self, key):
