@@ -43,6 +43,11 @@ class Panel:
         self.children.append(child)
         child.parent = self
         self.update_size()
+        if not self.focused_child:
+            if child._focusable:
+                self.focused_child = child
+                self.focused_child_idx = len(self.children)-1
+                self.set_focus(self.has_focus)
         self._need_layout = True
 
     def update_size(self):
@@ -58,11 +63,10 @@ class Panel:
 
     #--------------------------------------------------------------------
 
-    def give_window(self, child, height=None, width=None,
-                                 top=None, left=None,
-                                 align_ver='top', align_hor='left'):
+    def give_window(self, height=None, width=None, top=None, left=None,
+                          align_ver='top', align_hor='left'):
         """
-        Create a subwindow for a child.
+        Create a subwindow for a child (self being the child).
 
         height, width, top, and left specify the area in the parent window
         that is allowed to be used, if they are not given, the maximum
@@ -73,36 +77,39 @@ class Panel:
         if left is None:
             left = 0
         if height is None:
-            height = self.win.getmaxyx()[0]-top
+            height = self.parent.win.getmaxyx()[0]-top
         if width is None:
-            width = self.win.getmaxyx()[1]-left
+            width = self.parent.win.getmaxyx()[1]-left
 
-        if height < child.min_height:
+        if height < self.min_height:
             #raise PanelError('need at least %i columns' % child.min_height)
             pass # deal with it
-        if width < child.min_width:
+        if width < self.min_width:
             #raise PanelError('need at least %i rows' % child.min_width)
             pass # deal with it
 
-        if child.max_height is not None:
-            height = min(height, child.max_height)
-            remaining_height = height - child.max_height
+        if self.max_height is not None:
+            height = min(height, self.max_height)
+            remaining_height = height - self.max_height
             top += {'top':    0,
                     'center': remaining_height/2,
                     'bottom': remaining_height
                    }[align_ver]
-        if child.max_width is not None:
-            width = min(width, child.max_width)
-            remaining_width = width - child.max_width
+        if self.max_width is not None:
+            width = min(width, self.max_width)
+            remaining_width = width - self.max_width
             left += {'left':   0,
                      'center': remaining_width/2,
                      'right':  remaining_width
                     }[align_hor]
 
-        if not child.win or ((height, width) != child.win.getmaxyx() and
-                                 (top, left) != child.win.getbegyx()):
-            child.win = self.win.derwin(height, width, top, left)
-            child._need_layout = True
+        if not self.win or ((height, width) != self.win.getmaxyx() and
+                                (top, left) != self.win.getbegyx()):
+            try:
+                self.win = self.parent.win.derwin(height, width, top, left)
+            except curses.error:
+                raise RuntimeError(' '.join(map(str, [height, width, top, left])))
+            self._need_layout = True
 
     #--------------------------------------------------------------------
 
@@ -133,7 +140,7 @@ class Panel:
         if height == 0 or width == 0:
             return
 
-        if self._need_layout:
+        if self.children and self._need_layout:
             self._layout(height, width)
         self._need_layout = False
 
@@ -148,13 +155,15 @@ class Panel:
         Given the window size, create subwindows for the children.
 
         This should also handle which children are visible, in case the
-        window is too small.
+        window is too small. Use c.give_window() for each visible child c.
         """
         raise NotImplementedError
             
     def _draw(self, height, width):
         """
         Given the window size, draw the panel.
+
+        The children have already been drawn
         """
         raise NotImplementedError
 
@@ -163,18 +172,22 @@ class Panel:
     def set_focus(self, has_focus):
         if self._focusable:
             self.has_focus = has_focus
-            self.focused_child.set_focus(has_focus)
+            if self.focused_child:
+                self.focused_child.set_focus(has_focus)
 
     def _move_focus(self, amount):
         while True:
             self.focused_child_idx += amount
-            if self.focused_child_idx in range(len(self.children)):
+            if self.focused_child_idx not in range(len(self.children)):
+                self.focused_child_idx -= amount
                 return False
             if self.children[self.focused_child_idx]._focusable:
-                self.focused_child.set_focus(False)
+                if self.focused_child:
+                    self.focused_child.set_focus(False)
                 self.focused_child = self.children[self.focused_child_idx]
                 self.focused_child.set_focus(True)
                 return True
+        # TODO _need_layout
 
     def focus_next(self):
         return self._move_focus(1)

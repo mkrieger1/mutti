@@ -4,64 +4,29 @@ from panel import Panel
 class _PanelList(Panel):
     """Generic panel list (vertical or horizontal)."""
 
-    def __init__(self, parent, pos):
-        Panel.__init__(self, parent, pos, (0, 0))
-        self.panels = []
-        self.focus = 0
-        self.is_focused = True
+    def __init__(self):
+        Panel.__init__(self)
+        self.align_hor = {}
+        self.align_ver = {}
 
-    def add_existing(self, panel):
-        self._calc_geom(panel)
-        self.panels.append(panel)
-        if self.is_focused:
-            self.panels[self.focus]._focus()
+    def _draw(self, height, width):
+        pass
 
-    def add_new(self, panelclass, *args):
-        pos = self._new_pos()
-        p = panelclass(self.win, pos, *args)
-        self.add_existing(p)
-
-    def _calc_geom(self, newpanel):
-        raise NotImplementedError
-
-    def _new_pos(self):
-        raise NotImplementedError
-
-    def _focus(self):
-        self.panels[self.focus]._focus()
-        Panel._focus(self)
-
-    def _defocus(self):
-        self.panels[self.focus]._defocus()
-        Panel._defocus(self)
-
-    def set_focus(self, i):
-        self.panels[self.focus]._defocus()
-        self.focus = i % len(self.panels)
-        if self.is_focused:
-            self.panels[self.focus]._focus()
-
-    def focus_next(self):
-        self.set_focus(self.focus + 1)
-
-    def focus_prev(self):
-        self.set_focus(self.focus - 1)
-
-    def draw(self):
-        for p in self.panels:
-            p.redraw()
-
-    def handle_key(self, key):
-        if key is None:
-            return
-        elif key in map(ord, map(str, range(1, len(self.panels)+1))):
-            self.set_focus(int(chr(key))-1)
-        elif key in self._next_keys:
+    def _handle_key(self, key):
+        #if key in map(ord, map(str, range(1, len(self.children)+1))):
+        #    self.set_focus(int(chr(key))-1)
+        if key in self._next_keys:
             self.focus_next()
         elif key in self._prev_keys:
             self.focus_prev()
         else:
-            return self.panels[self.focus].handle_key(key)
+            return key
+
+    def add(self, panel, align_hor='left', align_ver='top'):
+        self.adopt(panel)
+        self.align_hor[panel] = align_hor
+        self.align_ver[panel] = align_ver
+
         
 
 class PanelVList(_PanelList):
@@ -70,12 +35,25 @@ class PanelVList(_PanelList):
     _next_keys = [curses.KEY_DOWN, ord('j')]
     _prev_keys = [curses.KEY_UP, ord('k')]
 
-    def _new_pos(self):
-        return self.height, 0
+    def _update_size(self):
+        self.min_height = sum(c.min_height for c in self.children)
+        self.min_width = max(c.min_width for c in self.children)
 
-    def _calc_geom(self, newpanel):
-        self.height += newpanel.height
-        self.width = max(self.width, newpanel.width)
+    def _layout(self, height, width):
+        if height >= self.min_height:
+            top = 0
+            for c in self.children:
+                c.give_window(height=c.min_height, top=top,
+                              align_hor=self.align_hor[c],
+                              align_ver=self.align_ver[c])
+                top += c.min_height
+        else: # TODO use focus
+            top = 0
+            for c in self.children:
+                c.give_window(height=c.min_height, top=top)
+                top += c.min_height
+                if top >= self.min_height:
+                    break
         
 
 class PanelHList(_PanelList):
@@ -84,10 +62,23 @@ class PanelHList(_PanelList):
     _next_keys = [curses.KEY_RIGHT, ord('l')]
     _prev_keys = [curses.KEY_LEFT, ord('h')]
 
-    def _new_pos(self):
-        return 0, self.width
-
-    def _calc_geom(self, newpanel):
+    def _update_size(self, newpanel):
         self.height = max(self.height, newpanel.height)
         self.width += newpanel.width
+
+    def _layout(self, height, width):
+        if width >= self.min_width:
+            left = 0
+            for c in self.children:
+                c.give_window(width=c.min_width, left=left,
+                              align_hor=self.align_hor[c],
+                              align_ver=self.align_ver[c])
+                left += c.min_width
+        else: # TODO use focus
+            left = 0
+            for c in self.children:
+                c.give_window(width=c.min_width, left=left)
+                left += c.min_width
+                if left >= self.min_width:
+                    break
 
