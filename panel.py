@@ -6,6 +6,8 @@ class PanelError(Exception):
 
 
 class Panel:
+    _focusable = True
+
     def __init__(self, min_height=None, min_width=None,
                        max_height=None, max_width=None, win=None):
         """
@@ -27,18 +29,34 @@ class Panel:
 
         self.parent = None
         self.children = []
+        self.focused_child_idx = 0
         self.focused_child = None
+
         self.has_focus = False
 
+    #--------------------------------------------------------------------
 
     def adopt(self, child):
         """
-        Declare a panel as child.
+        Declare another panel as child.
         """
         self.children.append(child)
         child.parent = self
+        self.update_size()
         self._need_layout = True
 
+    def update_size(self):
+        self._update_size()
+        if self.parent:
+            self.parent.update_size()
+
+    def _update_size(self):
+        """
+        Calculate minimum size based on children.
+        """
+        raise NotImplementedError
+
+    #--------------------------------------------------------------------
 
     def give_window(self, child, height=None, width=None,
                                  top=None, left=None,
@@ -61,12 +79,10 @@ class Panel:
 
         if height < child.min_height:
             #raise PanelError('need at least %i columns' % child.min_height)
-            # deal with it!
-            pass
+            pass # deal with it
         if width < child.min_width:
             #raise PanelError('need at least %i rows' % child.min_width)
-            # deal with it!
-            pass
+            pass # deal with it
 
         if child.max_height is not None:
             height = min(height, child.max_height)
@@ -83,28 +99,31 @@ class Panel:
                      'right':  remaining_width
                     }[align_hor]
 
-        child.win = self.win.derwin(height, width, top, left)
-        child._need_layout = True
+        if not child.win or ((height, width) != child.win.getmaxyx() and
+                                 (top, left) != child.win.getbegyx()):
+            child.win = self.win.derwin(height, width, top, left)
+            child._need_layout = True
 
-
+    #--------------------------------------------------------------------
 
     def handle_key(self, key):
         if key == curses.KEY_RESIZE:
             self._need_layout = True
-            return
-        if self.focused_child:
-            key = self.focused_child.handle_key(key)
-        if key is not None:
-            return self._handle_key(key)
+        else:
+            if self.focused_child:
+                key = self.focused_child.handle_key(key)
+            if key is not None:
+                return self._handle_key(key)
 
     def _handle_key(self, key):
         """
         Do something depending on the key, or return the key.
 
+        The key is not None.
         """
         raise NotImplementedError
 
-
+    #--------------------------------------------------------------------
 
     def redraw(self):
         """
@@ -139,8 +158,31 @@ class Panel:
         """
         raise NotImplementedError
 
+    #--------------------------------------------------------------------
 
+    def set_focus(self, has_focus):
+        if self._focusable:
+            self.has_focus = has_focus
+            self.focused_child.set_focus(has_focus)
 
+    def _move_focus(self, amount):
+        while True:
+            self.focused_child_idx += amount
+            if self.focused_child_idx in range(len(self.children)):
+                return False
+            if self.children[self.focused_child_idx]._focusable:
+                self.focused_child.set_focus(False)
+                self.focused_child = self.children[self.focused_child_idx]
+                self.focused_child.set_focus(True)
+                return True
+
+    def focus_next(self):
+        return self._move_focus(1)
+
+    def focus_prev(self):
+        return self._move_focus(-1)
+
+    #--------------------------------------------------------------------
                             
     def addch(self, y, x, char, attr=curses.A_NORMAL):
         if self.win:
@@ -148,7 +190,6 @@ class Panel:
                 self.win.addch(y, x, char, attr)
             except curses.error:
                 pass
-
                             
     def addstr(self, y, x, string, attr=curses.A_NORMAL):
         if self.win:
