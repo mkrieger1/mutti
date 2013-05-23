@@ -1,9 +1,13 @@
 import curses
-from panel import Panel, PanelError
+from panel import Panel
+
+class QuitScreen(Exception):
+    pass
 
 class Screen(Panel):
     def __init__(self, stdscr):
         Panel.__init__(self, win=stdscr)
+        curses.curs_set(0)
         self.set_focus(True)
 
     def adopt(self, child):
@@ -25,4 +29,10 @@ class Screen(Panel):
 
     def _draw(self, height, width):
         pass
+
+    def _handle_key(self, key):
+        if key in map(ord, 'qQ'):
+            raise QuitScreen
+        else:
+            return key
 

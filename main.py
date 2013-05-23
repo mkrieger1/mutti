@@ -2,7 +2,7 @@ import curses
 import sys
 import time
 
-from screen import Screen
+from screen import Screen, QuitScreen
 from dial import Dial
 from lists import PanelVList, PanelHList
 from status import Status
@@ -10,25 +10,16 @@ from spacer import Spacer
 
 
 def main(stdscr, *main_args):
-    curses.curs_set(0)
 
     s = Status()
     mainscreen = Screen(stdscr)
 
-    vspace = Spacer(min_height=2)
-    hspace = Spacer(min_width=4)
-
     v = PanelVList() #stdscr, (4, 6))#, "random dials")
-    v.adopt(vspace)
     for i in range(5):
         d = Dial(("Dial %02i"%i, 10), (2*i, 6), (-100, 100), s)
         v.adopt(d)
     v.adopt(s, align_ver='bottom')
-
-    h = PanelHList()
-    h.adopt(hspace)
-    h.adopt(v)
-    mainscreen.adopt(h)
+    mainscreen.adopt(v)
 
     #d2 = PanelVList(stdscr, (4, 21))#, "random dials 2")
     #for i in range(7):
@@ -44,10 +35,10 @@ def main(stdscr, *main_args):
         mainscreen.redraw()
         curses.doupdate()
         key = stdscr.getch()
-        if key == ord('q'):
-            break
-        else:
+        try:
             mainscreen.handle_key(key)
+        except QuitScreen:
+            break
             
 
 if __name__=='__main__':
