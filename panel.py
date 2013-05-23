@@ -119,6 +119,12 @@ class Panel:
                                    [used_height, used_width, top, left])))
             self._need_layout = True
 
+    def take_window(self):
+        """
+        Remove the window to make panel invisible.
+        """
+        self.win = None
+
     #--------------------------------------------------------------------
 
     def handle_key(self, key):
@@ -144,6 +150,9 @@ class Panel:
         """
         Redraw the panel and all children.
         """
+        if not self.win:
+            return
+
         height, width = self.win.getmaxyx()
         if height == 0 or width == 0:
             return
