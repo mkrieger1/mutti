@@ -2,8 +2,9 @@ import curses
 from panel import Panel
 
 class _PanelList(Panel):
-    """Generic panel list (vertical or horizontal)."""
-
+    """
+    Generic panel list (vertical or horizontal).
+    """
     def __init__(self):
         Panel.__init__(self)
         self.align_hor = {}
@@ -22,16 +23,17 @@ class _PanelList(Panel):
         else:
             return key
 
-    def add(self, panel, align_hor='left', align_ver='top'):
-        self.adopt(panel)
+    def adopt(self, panel, align_hor='left', align_ver='top'):
+        Panel.adopt(self, panel)
         self.align_hor[panel] = align_hor
         self.align_ver[panel] = align_ver
 
         
 
 class PanelVList(_PanelList):
-    """Vertical panel list."""
-
+    """
+    Vertical panel list.
+    """
     _next_keys = [curses.KEY_DOWN, ord('j')]
     _prev_keys = [curses.KEY_UP, ord('k')]
 
@@ -58,8 +60,9 @@ class PanelVList(_PanelList):
         
 
 class PanelHList(_PanelList):
-    """Horizontal panel list."""
-
+    """
+    Horizontal panel list.
+    """
     _next_keys = [curses.KEY_RIGHT, ord('l')]
     _prev_keys = [curses.KEY_LEFT, ord('h')]
 

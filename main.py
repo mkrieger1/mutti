@@ -16,10 +16,11 @@ def main(stdscr, *main_args):
 
     v = PanelVList() #stdscr, (4, 6))#, "random dials")
     for i in range(5):
-        d = Dial(("Dial %02i"%i, 8), (2*i, 4), (-100, 100), s)
-        v.add(d)
-    v.add(s, align_ver='bottom')
+        d = Dial(("Dial %02i"%i, 10), (2*i, 6), (-100, 100), s)
+        v.adopt(d)
+    v.adopt(s, align_ver='bottom')
     mainscreen.adopt(v)
+
     #d2 = PanelVList(stdscr, (4, 21))#, "random dials 2")
     #for i in range(7):
     #    d2.add_new(Dial, ("Dial2 %02i"%i, 9), (2*i, 4), (-100, 100))
@@ -37,13 +38,12 @@ def main(stdscr, *main_args):
         if key == ord('q'):
             break
         else:
-            v.handle_key(key)
+            mainscreen.handle_key(key)
             
 
 if __name__=='__main__':
-    main_args = sys.argv
     try:
-        curses.wrapper(main, *main_args)
+        curses.wrapper(main, *sys.argv)
     except KeyboardInterrupt:
         pass
 

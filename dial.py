@@ -64,6 +64,7 @@ class Dial(Panel):
         self.addstr(0, self.label_width,
                     str(self.value).rjust(self.value_digits),
                     curses.A_REVERSE if self.has_focus else curses.A_NORMAL)
+        # TODO handle size < min_size
 
     def _handle_key(self, key):
         if key == ord('+'):

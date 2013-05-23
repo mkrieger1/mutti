@@ -115,8 +115,10 @@ class Panel:
             try:
                 self.win = self.parent.win.derwin(used_height, used_width, top, left)
             except curses.error:
-                raise RuntimeError(' '.join(map(str,
-                                   [used_height, used_width, top, left])))
+                raise PanelError(
+                'failed to create subwindow %i %i at %i %i ' % (
+                                   used_height, used_width, top, left) +
+                '- parent window %i %i' % (self.parent.win.getmaxyx()))
             self._need_layout = True
 
     def take_window(self):
@@ -180,7 +182,7 @@ class Panel:
         """
         Given the window size, draw the panel.
 
-        The children have already been drawn
+        The children have already been drawn.
         """
         raise NotImplementedError
 
