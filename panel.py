@@ -94,6 +94,7 @@ class Panel:
             top = 0
         if left is None:
             left = 0
+
         if height is None:
             height = self.parent.win.getmaxyx()[0]-top
         if width is None:
@@ -103,16 +104,18 @@ class Panel:
             used_height = min(height, self.max_height)
         else:
             used_height = height
+
+        if self.max_width is not None:
+            used_width = min(width, self.max_width)
+        else:
+            used_width = width
+
         remaining_height = height - used_height
         top += {'top':    0,
                 'center': remaining_height/2,
                 'bottom': remaining_height
                }[align_ver]
 
-        if self.max_width is not None:
-            used_width = min(width, self.max_width)
-        else:
-            used_width = width
         remaining_width = width - used_width
         left += {'left':   0,
                  'center': remaining_width/2,
@@ -122,11 +125,12 @@ class Panel:
         if (not self.win or (used_height, used_width) != self.win.getmaxyx() or
                                           (top, left) != self.win.getbegyx()):
             try:
-                self.win = self.parent.win.derwin(used_height, used_width, top, left)
+                self.win = self.parent.win.derwin(used_height, used_width,
+                                                  top, left)
             except curses.error:
                 raise PanelError(
                 'failed to create subwindow %i %i at %i %i ' % (
-                                   used_height, used_width, top, left) +
+                             used_height, used_width, top, left) +
                 '- parent window %i %i' % (self.parent.win.getmaxyx()))
         self._need_layout = True # even if the window was not recreated
 
