@@ -7,6 +7,7 @@ class PanelError(Exception):
 
 class Panel:
     _focusable = True
+    _allow_children = True
 
     def __init__(self, min_height=None, min_width=None,
                        max_height=None, max_width=None, win=None):
@@ -52,6 +53,8 @@ class Panel:
         """
         Declare another panel as child.
         """
+        if not self._allow_children:
+            raise PanelError('children are not allowed')
         self.children.append(child)
         child.parent = self
         self.update_size()
