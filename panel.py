@@ -37,6 +37,9 @@ class Panel:
     #--------------------------------------------------------------------
 
     def log(self, text):
+        """
+        Write text to log file (must be provided in advance).
+        """
         try:
             print >> self._log, text
             self._log.flush()
@@ -68,7 +71,7 @@ class Panel:
         """
         Calculate minimum size based on children.
         """
-        raise NotImplementedError
+        raise NotImplementedError # needed if there are children
 
     #--------------------------------------------------------------------
 
@@ -130,8 +133,16 @@ class Panel:
     #--------------------------------------------------------------------
 
     def handle_key(self, key):
+        """
+        Pass the key down to focused child, or do something with it.
+        """
+        # The top-level panel catches terminal resize events.
         if key == curses.KEY_RESIZE:
             self._need_layout = True
+            return None
+        # Normal keys are passed down to the focused child.
+        # If we have no focused child or it didn't use the key (or it
+        # generated a new key!), we handle it.
         else:
             if self.focused_child:
                 key = self.focused_child.handle_key(key)
@@ -176,15 +187,15 @@ class Panel:
         This should also handle which children are visible, in case the
         window is too small. Use c.give_window() for each visible child c.
         """
-        raise NotImplementedError
+        raise NotImplementedError # needed if there are children
             
     def _draw(self, height, width):
         """
-        Given the window size, draw the panel.
+        Given the available size, draw the panel.
 
         The children have already been drawn.
         """
-        raise NotImplementedError
+        pass # implement it in subclass, if needed
 
     #--------------------------------------------------------------------
 
