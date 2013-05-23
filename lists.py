@@ -79,14 +79,14 @@ class PanelHList(_PanelList):
         if width >= self.min_width:
             left = 0
             for c in self.children:
-                c.give_window(width=c.min_width, left=left,
+                c.give_window(width=None, left=left,
                               align_hor=self.align_hor[c],
                               align_ver=self.align_ver[c])
                 left += c.min_width
         else: # TODO use focus
             left = 0
             for c in self.children:
-                c.give_window(width=c.min_width, left=left)
+                c.give_window(width=None, left=left)
                 left += c.min_width
                 if left >= self.min_width:
                     break
