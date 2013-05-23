@@ -128,7 +128,7 @@ class Panel:
                 'failed to create subwindow %i %i at %i %i ' % (
                                    used_height, used_width, top, left) +
                 '- parent window %i %i' % (self.parent.win.getmaxyx()))
-            self._need_layout = True
+        self._need_layout = True # even if the window was not recreated
 
     def take_window(self):
         """
