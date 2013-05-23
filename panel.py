@@ -36,6 +36,15 @@ class Panel:
 
     #--------------------------------------------------------------------
 
+    def log(self, text):
+        try:
+            print >> self._log, text
+            self._log.flush()
+        except:
+            pass
+
+    #--------------------------------------------------------------------
+
     def adopt(self, child):
         """
         Declare another panel as child.
