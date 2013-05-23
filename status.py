@@ -5,7 +5,7 @@ class Status(Panel):
     """A widget to display one line of text."""
 
     def __init__(self):
-        Panel.__init__(self, min_height=1)
+        Panel.__init__(self, min_height=1, max_height=1)
         self.text = ''
         self._focusable = False
 

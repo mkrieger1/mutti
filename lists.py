@@ -43,17 +43,18 @@ class PanelVList(_PanelList):
         if height >= self.min_height:
             top = 0
             for c in self.children:
-                c.give_window(height=c.min_height, top=top,
+                c.give_window(height=None, top=top,
                               align_hor=self.align_hor[c],
                               align_ver=self.align_ver[c])
                 top += c.min_height
         else: # TODO use focus
             top = 0
             for c in self.children:
-                c.give_window(height=c.min_height, top=top)
-                top += c.min_height
-                if top >= self.min_height:
-                    break
+                if top+c.min_height > height:
+                    c.take_window()
+                else:
+                    c.give_window(height=None, top=top)
+                    top += c.min_height
         
 
 class PanelHList(_PanelList):

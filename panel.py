@@ -81,34 +81,33 @@ class Panel:
         if width is None:
             width = self.parent.win.getmaxyx()[1]-left
 
-        if height < self.min_height:
-            #raise PanelError('need at least %i columns' % child.min_height)
-            pass # deal with it
-        if width < self.min_width:
-            #raise PanelError('need at least %i rows' % child.min_width)
-            pass # deal with it
-
         if self.max_height is not None:
-            height = min(height, self.max_height)
-            remaining_height = height - self.max_height
-            top += {'top':    0,
-                    'center': remaining_height/2,
-                    'bottom': remaining_height
-                   }[align_ver]
-        if self.max_width is not None:
-            width = min(width, self.max_width)
-            remaining_width = width - self.max_width
-            left += {'left':   0,
-                     'center': remaining_width/2,
-                     'right':  remaining_width
-                    }[align_hor]
+            used_height = min(height, self.max_height)
+        else:
+            used_height = height
+        remaining_height = height - used_height
+        top += {'top':    0,
+                'center': remaining_height/2,
+                'bottom': remaining_height
+               }[align_ver]
 
-        if not self.win or ((height, width) != self.win.getmaxyx() and
-                                (top, left) != self.win.getbegyx()):
+        if self.max_width is not None:
+            used_width = min(width, self.max_width)
+        else:
+            used_width = width
+        remaining_width = width - used_width
+        left += {'left':   0,
+                 'center': remaining_width/2,
+                 'right':  remaining_width
+                }[align_hor]
+
+        if (not self.win or (used_height, used_width) != self.win.getmaxyx() or
+                                          (top, left) != self.win.getbegyx()):
             try:
-                self.win = self.parent.win.derwin(height, width, top, left)
+                self.win = self.parent.win.derwin(used_height, used_width, top, left)
             except curses.error:
-                raise RuntimeError(' '.join(map(str, [height, width, top, left])))
+                raise RuntimeError(' '.join(map(str,
+                                   [used_height, used_width, top, left])))
             self._need_layout = True
 
     #--------------------------------------------------------------------

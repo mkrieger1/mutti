@@ -9,7 +9,8 @@ class Dial(Panel):
         self.label_width = label[1]
         self.value_digits = value[1]
         width = self.label_width + self.value_digits + 1
-        Panel.__init__(self, min_height=1, min_width=width)
+        Panel.__init__(self, min_height=1, min_width=width,
+                             max_height=1, max_width=width)
 
         self.vmin, self.vmax = vrange
         self.step = 10
