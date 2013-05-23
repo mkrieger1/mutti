@@ -6,6 +6,7 @@ from screen import Screen
 from dial import Dial
 from lists import PanelVList, PanelHList
 from status import Status
+from spacer import Spacer
 
 
 def main(stdscr, *main_args):
@@ -14,12 +15,20 @@ def main(stdscr, *main_args):
     s = Status()
     mainscreen = Screen(stdscr)
 
+    vspace = Spacer(min_height=2)
+    hspace = Spacer(min_width=4)
+
     v = PanelVList() #stdscr, (4, 6))#, "random dials")
+    v.adopt(vspace)
     for i in range(5):
         d = Dial(("Dial %02i"%i, 10), (2*i, 6), (-100, 100), s)
         v.adopt(d)
     v.adopt(s, align_ver='bottom')
-    mainscreen.adopt(v)
+
+    h = PanelHList()
+    h.adopt(hspace)
+    h.adopt(v)
+    mainscreen.adopt(h)
 
     #d2 = PanelVList(stdscr, (4, 21))#, "random dials 2")
     #for i in range(7):
