@@ -10,6 +10,9 @@ class _PanelList(Panel):
         self.align_hor = {}
         self.align_ver = {}
 
+    def _erase(self, height, width):
+        self.win.erase()
+
     def _draw(self, height, width):
         pass
 

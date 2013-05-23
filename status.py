@@ -12,6 +12,9 @@ class Status(Panel):
     def set(self, text):
         self.text = text
 
+    def _erase(self, height, width):
+        self.win.erase()
+
     def _draw(self, height, width):
         self.win.bkgd(' ', curses.A_REVERSE)
         self.addstr(0, 0, self.text)

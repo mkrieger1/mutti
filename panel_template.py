@@ -48,11 +48,18 @@ class MyPanel(Panel):
     #--------------------------------------------------------------------
     # things that can be implemented optionally
     #--------------------------------------------------------------------
+    def _erase(self, height, width):
+        """
+        Erase the window, and draw the background.
+
+        The children will be drawn on top.
+        """
+        self.win.erase()
+        # draw the background
+            
     def _draw(self, height, width):
         """
-        Given the available size, draw the panel.
-
-        The children have already been drawn.
+        Draw the foreground over the children.
         """
-        raise NotImplementedError
+        pass # draw the foreground
 

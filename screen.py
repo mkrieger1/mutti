@@ -13,7 +13,9 @@ class Screen(Panel):
     def _layout(self, height, width):
         self.children[0].give_window(height=height-2, width=width-2,
                                      top=1, left=1)
+    def _erase(self, height, width):
+        self.win.erase()
 
     def _draw(self, height, width):
-        self.win.box()
+        pass
 

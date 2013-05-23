@@ -59,6 +59,9 @@ class Dial(Panel):
         except ValueError:
             pass
 
+    def _erase(self, height, width):
+        self.win.erase()
+
     def _draw(self, height, width):
         self.addstr(0, 0, self.label_text)
         self.addstr(0, self.label_width,

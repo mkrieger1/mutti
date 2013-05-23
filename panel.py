@@ -179,7 +179,7 @@ class Panel:
             self._layout(height, width)
         self._need_layout = False
 
-        self.win.erase()
+        self._erase(height, width)
         for child in self.children:
             child.redraw()
         self._draw(height, width)
@@ -194,11 +194,17 @@ class Panel:
         """
         raise NotImplementedError # needed if there are children
             
+    def _erase(self, height, width):
+        """
+        Erase the window, and draw the background.
+
+        The children will be drawn on top.
+        """
+        pass # implement it in subclass, if needed
+            
     def _draw(self, height, width):
         """
-        Given the available size, draw the panel.
-
-        The children have already been drawn.
+        Draw the foreground over the children.
         """
         pass # implement it in subclass, if needed
 
