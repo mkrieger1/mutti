@@ -63,13 +63,15 @@ class Panel:
         self._need_layout = True
 
     def update_size(self):
-        self._update_size()
+        self.min_height, self.min_width = self._update_size()
         if self.parent:
             self.parent.update_size()
 
     def _update_size(self):
         """
         Calculate minimum size based on children.
+
+        Must return a tuple (min_height, min_width).
         """
         raise NotImplementedError # needed if there are children
 

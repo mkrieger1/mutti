@@ -7,7 +7,8 @@ class Screen(Panel):
         self.set_focus(True)
 
     def _update_size(self):
-        pass
+        c = self.children[0]
+        return (c.min_height, c.min_width)
 
     def _layout(self, height, width):
         self.children[0].give_window(height=height-2, width=width-2,
