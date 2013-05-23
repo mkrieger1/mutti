@@ -76,7 +76,8 @@ class Panel:
 
         Must return a tuple (min_height, min_width).
         """
-        raise NotImplementedError # needed if there are children
+        if self._allow_children:
+            raise NotImplementedError # needed if there are children
 
     #--------------------------------------------------------------------
 
@@ -160,7 +161,8 @@ class Panel:
 
         The key is not None.
         """
-        raise NotImplementedError
+        if self._focusable:
+            raise NotImplementedError # needed if has focus
 
     #--------------------------------------------------------------------
 
@@ -192,7 +194,8 @@ class Panel:
         This should also handle which children are visible, in case the
         window is too small. Use c.give_window() for each visible child c.
         """
-        raise NotImplementedError # needed if there are children
+        if self._allow_children:
+            raise NotImplementedError # needed if there are children
             
     def _erase(self, height, width):
         """
