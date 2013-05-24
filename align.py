@@ -7,16 +7,16 @@ class VAlign(Panel):
     _max_children = 1
 
     def __init__(self, height=None, align_ver='top'):
-        Panel.__init__(self, min_height=height, max_width=0)
+        Panel.__init__(self, min_height=height, max_height=height,
+                             max_width=0)
         self.align_ver = align_ver
-        self.defined_height = height or INF
 
     def _handle_key(self, key):
         return key
 
     def _get_size(self):
         c = self.children[0]
-        height = max(self.defined_height, c.max_height)
+        height = max(self.max_height, c.max_height)
         return (height, c.min_width,
                 height, c.max_width)
 
