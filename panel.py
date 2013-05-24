@@ -1,5 +1,6 @@
 import curses
 
+INF = float('inf')
 
 class PanelError(Exception):
     pass
@@ -13,18 +14,19 @@ class Panel:
                        max_height=None, max_width=None, win=None):
         """
         Specify minimum/maximum size and optionally set the window.
+
+        Minimum size means the size that the panel will need to be drawn
+        completely.
+        Maximum size means the size that the panel will occupy if the
+        available drawing area is infinite.
         
         If minimum/maximum size are not given, they default to (0, 0) and
-        the available size in the window, respectively.
+        (inf, inf), respectively.
         """
-        if min_height is None:
-            min_height = 0
-        if min_width is None:
-            min_width = 0
-        self.min_height = min_height
-        self.min_width = min_width
-        self.max_height = max_height
-        self.max_width = max_width
+        self.min_height = min_height or 0
+        self.min_width  = min_width  or 0
+        self.max_height = max_height or INF
+        self.max_width  = max_width  or INF
 
         self.win = win
 
@@ -66,15 +68,24 @@ class Panel:
         self._need_layout = True
 
     def update_size(self):
-        self.min_height, self.min_width = self._update_size()
+        """
+        Set the current minimum/maximum size and tell the parent to do so.
+
+        A panel should do this whenever it changed its state in a way
+        that influences its minimum or maximum size, for example if a
+        child is adopted.
+        """
+        (self.min_height, self.min_width,
+         self.max_height, self.max_width) = self._get_size()
         if self.parent:
             self.parent.update_size()
 
-    def _update_size(self):
+    def _get_size(self):
         """
-        Calculate minimum size based on children.
+        Calculate minimum and maximum size of a panel.
 
-        Must return a tuple (min_height, min_width).
+        Must return a tuple (min_height, min_width,
+                             max_height, max_width).
         """
         if self._allow_children:
             raise NotImplementedError # needed if there are children
@@ -90,49 +101,41 @@ class Panel:
         that is allowed to be used, if they are not given, the maximum
         available space is used (if needed).
         """
-        if top is None:
-            top = 0
-        if left is None:
-            left = 0
+        top  = top  or 0
+        left = left or 0
 
-        if height is None:
-            height = self.parent.win.getmaxyx()[0]-top
-        if width is None:
-            width = self.parent.win.getmaxyx()[1]-left
+        height = height or INF
+        width  = width  or INF
 
-        if self.max_height is not None:
-            used_height = min(height, self.max_height)
-        else:
-            used_height = height
+        av_height = min(height, self.parent.win.getmaxyx()[0]-top)
+        av_width  = min(width,  self.parent.win.getmaxyx()[1]-left)
 
-        if self.max_width is not None:
-            used_width = min(width, self.max_width)
-        else:
-            used_width = width
+        used_height = min(av_height, self.max_height)
+        used_width  = min(av_width,  self.max_width)
 
-        remaining_height = height - used_height
-        top += {'top':    0,
+        remaining_height = av_height - used_height
+        remaining_width  = av_width  - used_width
+
+        top += {'top'   : 0,
                 'center': remaining_height/2,
                 'bottom': remaining_height
                }[align_ver]
 
-        remaining_width = width - used_width
-        left += {'left':   0,
+        left += {'left'  : 0,
                  'center': remaining_width/2,
-                 'right':  remaining_width
+                 'right' : remaining_width
                 }[align_hor]
 
-        if (not self.win or (used_height, used_width) != self.win.getmaxyx() or
-                                          (top, left) != self.win.getbegyx()):
-            try:
-                self.win = self.parent.win.derwin(used_height, used_width,
-                                                  top, left)
-            except curses.error:
-                raise PanelError(
-                'failed to create subwindow %i %i at %i %i ' % (
-                             used_height, used_width, top, left) +
-                '- parent window %i %i' % (self.parent.win.getmaxyx()))
-        self._need_layout = True # even if the window was not recreated
+        try:
+            self.win = self.parent.win.derwin(used_height, used_width,
+                                              top, left)
+        except curses.error:
+            raise PanelError(
+            '%s failed to create subwindow %i %i at %i %i ' % (
+                str(self), used_height, used_width, top, left) +
+            '- parent window %i %i' % (self.parent.win.getmaxyx()))
+
+        self._need_layout = True
 
     def take_window(self):
         """

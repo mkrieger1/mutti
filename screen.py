@@ -16,9 +16,9 @@ class Screen(Panel):
         else:
             raise PanelError('can only have one child')
 
-    def _update_size(self):
+    def _get_size(self):
         c = self.children[0]
-        return (c.min_height, c.min_width)
+        return c._get_size()
 
     def _layout(self, height, width):
         c = self.children[0]

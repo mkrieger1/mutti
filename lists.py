@@ -40,10 +40,12 @@ class PanelVList(_PanelList):
     _next_keys = [curses.KEY_DOWN, ord('j')]
     _prev_keys = [curses.KEY_UP, ord('k')]
 
-    def _update_size(self):
+    def _get_size(self):
         min_height = sum(c.min_height for c in self.children)
         min_width = max(c.min_width for c in self.children)
-        return (min_height, min_width)
+        max_height = sum(c.max_height for c in self.children)
+        max_width = max(c.max_width for c in self.children)
+        return (min_height, min_width, max_height, max_width)
 
     def _layout(self, height, width):
         if height >= self.min_height:
@@ -70,10 +72,12 @@ class PanelHList(_PanelList):
     _next_keys = [curses.KEY_RIGHT, ord('l')]
     _prev_keys = [curses.KEY_LEFT, ord('h')]
 
-    def _update_size(self):
+    def _get_size(self):
         min_height = max(c.min_height for c in self.children)
         min_width = sum(c.min_width for c in self.children)
-        return (min_height, min_width)
+        max_height = max(c.max_height for c in self.children)
+        max_width = sum(c.max_width for c in self.children)
+        return (min_height, min_width, max_height, max_width)
 
     def _layout(self, height, width):
         if width >= self.min_width:
