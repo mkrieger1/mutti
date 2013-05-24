@@ -58,8 +58,8 @@ class Panel:
         if not self._allow_children:
             raise PanelError('children are not allowed')
         self.children.append(child)
-        child.parent = self
         self.update_size()
+        child.parent = self
         if not self.focused_child:
             if child._focusable:
                 self.focused_child = child

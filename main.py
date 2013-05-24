@@ -10,7 +10,6 @@ from spacer import Spacer
 
 
 def main(stdscr, *main_args):
-
     s = Status()
     mainscreen = Screen(stdscr)
 
