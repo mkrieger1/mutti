@@ -22,7 +22,8 @@ class Screen(Panel):
 
     def _layout(self, height, width):
         c = self.children[0]
-        self.children[0].give_window()
+        self.children[0].give_window(
+            align_ver='center', align_hor='center')
 
     def _erase(self, height, width):
         self.win.erase()
