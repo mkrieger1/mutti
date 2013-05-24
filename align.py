@@ -26,7 +26,4 @@ class VAlign(Panel):
 
     def _erase(self, height, width):
         self.win.erase()
-        for y in range(height):
-            for x in range(width):
-                self.addch(y, x, ',')
 
