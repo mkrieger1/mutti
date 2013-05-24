@@ -29,11 +29,14 @@ class MyPanel(Panel):
     #--------------------------------------------------------------------
     # things that need to be implemented only if we have any children
     #--------------------------------------------------------------------
-    def _update_size(self):
+    def _get_size(self):
         """
-        Calculate minimum size based on children.
+        Calculate minimum and maximum size of a panel.
 
-        Must return a tuple (min_height, min_width).
+        Must return a tuple (min_height, min_width,
+                             max_height, max_width).
+        None as minimum value will be converted to 0.
+        None as maximum value will be converted to INF.
         """
         if self._max_children:
             raise NotImplementedError

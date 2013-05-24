@@ -75,8 +75,14 @@ class Panel:
         that influences its minimum or maximum size, for example if a
         child is adopted.
         """
-        (self.min_height, self.min_width,
-         self.max_height, self.max_width) = self._get_size()
+        (min_height, min_width,
+         max_height, max_width) = self._get_size()
+
+        self.min_height = min_height or 0
+        self.min_width  = min_width  or 0
+        self.max_height = max_height or INF
+        self.max_width  = max_width  or INF
+
         if self.parent:
             self.parent.update_size()
 
@@ -86,6 +92,8 @@ class Panel:
 
         Must return a tuple (min_height, min_width,
                              max_height, max_width).
+        None as minimum value will be converted to 0.
+        None as maximum value will be converted to INF.
         """
         if self._max_children:
             raise NotImplementedError # needed if there are children
