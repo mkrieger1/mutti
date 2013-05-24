@@ -182,11 +182,12 @@ class Panel:
 
         height, width = self.win.getmaxyx()
         if height == 0 or width == 0:
+            self.take_window()
             return
 
         if self.children and self._need_layout:
             self._layout(height, width)
-        self._need_layout = False
+            self._need_layout = False
 
         self._erase(height, width)
         for child in self.children:
