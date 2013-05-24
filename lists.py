@@ -28,8 +28,8 @@ class _PanelList(Panel):
 
     def adopt(self, panel, align_hor='left', align_ver='top'):
         Panel.adopt(self, panel)
-        self.align_hor[panel] = align_hor
-        self.align_ver[panel] = align_ver
+        self.align_hor[panel] = align_hor # has no meaning in HList
+        self.align_ver[panel] = align_ver # has no meaning in VList
 
         
 
@@ -50,13 +50,12 @@ class PanelVList(_PanelList):
     def _layout(self, height, width): # TODO use focus
         top = 0
         for c in self.children:
-            if top+c.min_height > height:
-                c.take_window()
-            else:
+            if top < height:
                 c.give_window(top=top, height=c.min_height,
-                              align_hor=self.align_hor[c],
-                              align_ver=self.align_ver[c])
+                              align_hor=self.align_hor[c])
                 top += c.min_height
+            else:
+                c.take_window()
         
 
 class PanelHList(_PanelList):
@@ -76,11 +75,10 @@ class PanelHList(_PanelList):
     def _layout(self, height, width): # TODO use focus
         left = 0
         for c in self.children:
-            if left+c.min_width > width:
-                c.take_window()
-            else:
+            if left < width:
                 c.give_window(left=left, width=c.min_width,
-                              align_hor=self.align_hor[c],
                               align_ver=self.align_ver[c])
                 left += c.min_width
+            else:
+                c.take_window()
 
