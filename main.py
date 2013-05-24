@@ -6,19 +6,22 @@ from screen import Screen, QuitScreen
 from dial import Dial
 from lists import PanelVList, PanelHList
 from status import Status
-from spacer import Spacer
+from align import VAlign
 
 
 def main(stdscr, *main_args):
-    s = Status()
     mainscreen = Screen(stdscr)
 
-    v = PanelVList() #stdscr, (4, 6))#, "random dials")
+    statusbar = Status()
+    status_bottom = VAlign(align_ver='bottom')
+    status_bottom.adopt(statusbar)
+
+    vlist = PanelVList()
     for i in range(5):
-        d = Dial(("Dial %02i"%i, 10), (2*i, 6), (-100, 100), s)
-        v.adopt(d)
-    v.adopt(s, align_ver='bottom')
-    mainscreen.adopt(v)
+        d = Dial(("Dial %02i"%i, 10), (2*i, 6), (-100, 100), statusbar)
+        vlist.adopt(d)
+    vlist.adopt(status_bottom)
+    mainscreen.adopt(vlist)
 
     #d2 = PanelVList(stdscr, (4, 21))#, "random dials 2")
     #for i in range(7):
