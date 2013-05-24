@@ -47,22 +47,16 @@ class PanelVList(_PanelList):
         max_width = max(c.max_width for c in self.children)
         return (min_height, min_width, max_height, max_width)
 
-    def _layout(self, height, width):
-        if height >= self.min_height:
-            top = 0
-            for c in self.children:
-                c.give_window(height=None, top=top,
+    def _layout(self, height, width): # TODO use focus
+        top = 0
+        for c in self.children:
+            if top+c.min_height > height:
+                c.take_window()
+            else:
+                c.give_window(top=top, height=c.min_height,
                               align_hor=self.align_hor[c],
                               align_ver=self.align_ver[c])
                 top += c.min_height
-        else: # TODO use focus
-            top = 0
-            for c in self.children:
-                if top+c.min_height > height:
-                    c.take_window()
-                else:
-                    c.give_window(height=None, top=top)
-                    top += c.min_height
         
 
 class PanelHList(_PanelList):
@@ -79,19 +73,14 @@ class PanelHList(_PanelList):
         max_width = sum(c.max_width for c in self.children)
         return (min_height, min_width, max_height, max_width)
 
-    def _layout(self, height, width):
-        if width >= self.min_width:
-            left = 0
-            for c in self.children:
-                c.give_window(width=None, left=left,
+    def _layout(self, height, width): # TODO use focus
+        left = 0
+        for c in self.children:
+            if left+c.min_width > width:
+                c.take_window()
+            else:
+                c.give_window(left=left, width=c.min_width,
                               align_hor=self.align_hor[c],
                               align_ver=self.align_ver[c])
                 left += c.min_width
-        else: # TODO use focus
-            left = 0
-            for c in self.children:
-                c.give_window(width=None, left=left)
-                left += c.min_width
-                if left >= self.min_width:
-                    break
 
