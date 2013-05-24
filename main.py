@@ -6,14 +6,14 @@ from screen import Screen, QuitScreen
 from dial import Dial
 from lists import PanelVList, PanelHList
 from status import Status
-from align import VAlign
+from align import VAlign, HAlign
 
 
 def main(stdscr, *main_args):
     mainscreen = Screen(stdscr)
 
     statusbar = Status()
-    status_bottom = VAlign(align_ver='bottom')
+    status_bottom = VAlign(align='bottom')
     status_bottom.adopt(statusbar)
 
     vlist = PanelVList()
