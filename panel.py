@@ -8,7 +8,7 @@ class PanelError(Exception):
 
 class Panel:
     _focusable = True
-    _allow_children = True
+    _max_children = INF
 
     def __init__(self, min_height=None, min_width=None,
                        max_height=None, max_width=None, win=None):
@@ -55,8 +55,8 @@ class Panel:
         """
         Declare another panel as child.
         """
-        if not self._allow_children:
-            raise PanelError('children are not allowed')
+        if len(self.children) >= self._max_children:
+            raise PanelError('additional children are not allowed')
         self.children.append(child)
         self.update_size()
         child.parent = self
@@ -87,7 +87,7 @@ class Panel:
         Must return a tuple (min_height, min_width,
                              max_height, max_width).
         """
-        if self._allow_children:
+        if self._max_children:
             raise NotImplementedError # needed if there are children
 
     #--------------------------------------------------------------------
@@ -202,7 +202,7 @@ class Panel:
         This should also handle which children are visible, in case the
         window is too small. Use c.give_window() for each visible child c.
         """
-        if self._allow_children:
+        if self._max_children:
             raise NotImplementedError # needed if there are children
             
     def _erase(self, height, width):

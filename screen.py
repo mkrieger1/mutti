@@ -5,16 +5,12 @@ class QuitScreen(Exception):
     pass
 
 class Screen(Panel):
+    _max_children = 1
+
     def __init__(self, stdscr):
         Panel.__init__(self, win=stdscr)
         curses.curs_set(0)
         self.set_focus(True)
-
-    def adopt(self, child):
-        if not self.children:
-            Panel.adopt(self, child)
-        else:
-            raise PanelError('can only have one child')
 
     def _get_size(self):
         c = self.children[0]

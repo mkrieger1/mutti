@@ -9,7 +9,9 @@ class MyPanel(Panel):
 
     # uncomment this if needed, default is True
     # _focusable = False
-    # _allow_children = False
+
+    # uncomment and change this if needed, default is INF
+    # _max_children = 1
 
     #--------------------------------------------------------------------
     # things that need to be implemented in any case
@@ -33,7 +35,7 @@ class MyPanel(Panel):
 
         Must return a tuple (min_height, min_width).
         """
-        if self._allow_children:
+        if self._max_children:
             raise NotImplementedError
 
 
@@ -44,7 +46,7 @@ class MyPanel(Panel):
         This should also handle which children are visible, in case the
         window is too small. Use c.give_window() for each visible child c.
         """
-        if self._allow_children:
+        if self._max_children:
             raise NotImplementedError
 
 
