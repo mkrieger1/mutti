@@ -44,7 +44,7 @@ class Panel:
         Write text to log file (must be provided in advance).
         """
         try:
-            print >> self._log, text
+            print >> self._log, str(self), text
             self._log.flush()
         except:
             pass
