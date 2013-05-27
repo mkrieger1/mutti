@@ -51,24 +51,20 @@ class PanelVList(_PanelList):
         return (min_height, min_width, max_height, max_width)
 
     def _layout(self, height, width):
-        self.log("begin _layout")
         # initialize by giving the minimum to each child
         give = [c.min_height for c in self.children]
 
         # if already too large, remove children, but keep the focused
         if height < sum(give):
-            self.log("not enough space")
             over = sum(give) - height
             i = 0
             j = len(self.children)-1
             while True:
                 if j > self.focus_idx:
                     if give[j] >= over:
-                        self.log("reducing %i at %i" % (over, j))
                         give[j] -= over
                         break
                     else:
-                        self.log("removing %i at %i" % (give[j], j))
                         over -= give[j]
                         give[j] = 0
                         j -= 1
@@ -84,7 +80,6 @@ class PanelVList(_PanelList):
                         if over <= 0:
                             break
                     else:
-                        self.log("removing %i at %i" % (give[i], i))
                         over -= give[i]
                         give[i] = 0
                         i += 1
@@ -101,7 +96,6 @@ class PanelVList(_PanelList):
                 i = (i+1)%len(self.children)
 
         # step 2: assign windows
-        self.log("layout result %s" % str(give))
         top = 0
         for (c, h) in zip(self.children, give):
             if h > 0:

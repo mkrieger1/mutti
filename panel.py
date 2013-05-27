@@ -166,12 +166,8 @@ class Panel:
         # generated a new key!), we handle it.
         else:
             if self.focused_child:
-                self.log("wait for %s to handle %i" %
-                         (str(self.focused_child), key))
                 key = self.focused_child.handle_key(key)
-                self.log("got %s" % str(key))
             if key is not None:
-                self.log("handling %i" % key)
                 return self._handle_key(key)
 
     def _handle_key(self, key):
@@ -189,9 +185,7 @@ class Panel:
         """
         Redraw the panel and all children.
         """
-        self.log("begin redraw")
         if not self.win:
-            self.log("no window")
             return
 
         height, width = self.win.getmaxyx()
@@ -206,7 +200,6 @@ class Panel:
         self._erase(height, width)
         for child in self.children:
             child.redraw()
-        self.log("_draw %i %i" % (height, width))
         self._draw(height, width)
         self.win.noutrefresh()
 
