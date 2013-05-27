@@ -74,16 +74,11 @@ class PanelVList(_PanelList):
                             j += 1
                             give[j] += give[i]
                             over += give[i]
-                        over -= give[i]
-                        give[i] = 0
-                        i += 1
-                        if over <= 0:
-                            break
-                    else:
-                        over -= give[i]
-                        give[i] = 0
-                        i += 1
-
+                    over -= give[i]
+                    give[i] = 0
+                    i += 1
+                    if over <= 0:
+                        break
 
         # if space left, give more to those who want
         else:
