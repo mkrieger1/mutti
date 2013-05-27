@@ -1,4 +1,5 @@
 import curses
+import curses.ascii
 from panel import Panel
 
 class _PanelList(Panel):
@@ -20,9 +21,11 @@ class _PanelList(Panel):
         #if key in map(ord, map(str, range(1, len(self.children)+1))):
         #    self.set_focus(int(chr(key))-1)
         if key in self._next_keys:
-            self.focus_next()
+            if not self.focus_next():
+                return key
         elif key in self._prev_keys:
-            self.focus_prev()
+            if not self.focus_prev():
+                return key
         else:
             return key
 
@@ -37,8 +40,8 @@ class PanelVList(_PanelList):
     """
     Vertical panel list.
     """
-    _next_keys = [curses.KEY_DOWN, ord('j')]
-    _prev_keys = [curses.KEY_UP, ord('k')]
+    _next_keys = [curses.ascii.TAB, curses.KEY_DOWN, ord('j')]
+    _prev_keys = [curses.KEY_BTAB,  curses.KEY_UP,   ord('k')]
 
     def _get_size(self):
         min_height = sum(c.min_height for c in self.children)
@@ -62,8 +65,8 @@ class PanelHList(_PanelList):
     """
     Horizontal panel list.
     """
-    _next_keys = [curses.KEY_RIGHT, ord('l')]
-    _prev_keys = [curses.KEY_LEFT, ord('h')]
+    _next_keys = [curses.ascii.TAB, curses.KEY_RIGHT, ord('l')]
+    _prev_keys = [curses.KEY_BTAB,  curses.KEY_LEFT, ord('h')]
 
     def _get_size(self):
         min_height = max(c.min_height for c in self.children)

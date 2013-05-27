@@ -230,23 +230,34 @@ class Panel:
     #--------------------------------------------------------------------
 
     def set_focus(self, has_focus):
+        success = False
         if self._focusable:
             self.has_focus = has_focus
-            if self.focused_child:
-                self.focused_child.set_focus(has_focus)
+            success = True
+        if self.focused_child:
+            success |= self.focused_child.set_focus(has_focus)
+        return success
 
-    def _move_focus(self, amount):
-        focus_children = [c for c in self.children if c._focusable]
+    def _move_focus(self, direction):
+        """
+        Move the focus to next or previous child.
+
+        Returns True if successful, or False if there is no focusable
+        child.
+        """
+        amount = 1 if direction > 0 else -1
+        idx = self.focused_child_idx + amount
+
         while True:
-            self.focused_child_idx += amount
-            if self.focused_child_idx not in range(len(focus_children)):
-                self.focused_child_idx -= amount
+            if idx not in range(len(self.children)):
                 return False
-            if self.focused_child:
+            elif self.children[idx].set_focus(True):
                 self.focused_child.set_focus(False)
-            self.focused_child = focus_children[self.focused_child_idx]
-            self.focused_child.set_focus(True)
-            return True
+                self.focused_child = self.children[idx]
+                self.focused_child_idx = idx
+                return True
+            else:
+                idx += amount
         # TODO _need_layout
 
     def focus_next(self):

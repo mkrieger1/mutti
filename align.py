@@ -2,6 +2,7 @@ from panel import Panel
 
 class _Align(Panel):
     _max_children = 1
+    _focusable = False
 
     def _handle_key(self, key):
         return key
