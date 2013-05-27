@@ -10,18 +10,32 @@ from align import VAlign, HAlign
 
 
 def main(stdscr, *main_args):
+    f = open('loglog.log', 'w')
     mainscreen = Screen(stdscr)
 
     statusbar = Status()
-    status_bottom = VAlign(align='bottom')
+    status_bottom = VAlign(align='bottom', height=30)
     status_bottom.adopt(statusbar)
+    #status_bottom._log = f
 
     vlist = PanelVList()
+    vlist._log = f
     for i in range(5):
-        d = Dial("Dial with a long name %02i"%i, (-100, 100), 6, 2*i)
+        d = Dial("Dial %02i"%i, (-100, 100), 6, 2*i)
         vlist.adopt(d)
     vlist.adopt(status_bottom)
+
+    hlist = PanelHList()
+    hlist._log = f
+    for i in range(3):
+        d = Dial("Dial %02i"%i, (-100, 100), 6, 2*i)
+        hlist.adopt(d)
+    hlist_bottom = VAlign(align='bottom', height=20)
+    hlist_bottom.adopt(hlist)
+    vlist.adopt(hlist_bottom)
+
     mainscreen.adopt(vlist)
+    mainscreen._log = f
 
     #d2 = PanelVList(stdscr, (4, 21))#, "random dials 2")
     #for i in range(7):
@@ -38,6 +52,7 @@ def main(stdscr, *main_args):
         curses.doupdate()
         key = stdscr.getch()
         try:
+            mainscreen.log("-------------------")
             mainscreen.handle_key(key)
         except QuitScreen:
             break
