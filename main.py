@@ -18,7 +18,7 @@ def main(stdscr, *main_args):
 
     vlist = PanelVList()
     for i in range(5):
-        d = Dial(("Dial %02i"%i, 10), (2*i, 6), (-100, 100), statusbar)
+        d = Dial("Dial with a long name %02i"%i, (-100, 100), 6, 2*i)
         vlist.adopt(d)
     vlist.adopt(status_bottom)
     mainscreen.adopt(vlist)
