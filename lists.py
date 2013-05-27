@@ -50,13 +50,64 @@ class PanelVList(_PanelList):
         max_width = max(c.max_width for c in self.children)
         return (min_height, min_width, max_height, max_width)
 
-    def _layout(self, height, width): # TODO use focus
+    def _layout(self, height, width):
+        self.log("begin _layout")
+        # initialize by giving the minimum to each child
+        give = [c.min_height for c in self.children]
+
+        # if already too large, remove children, but keep the focused
+        if height < sum(give):
+            self.log("not enough space")
+            over = sum(give) - height
+            i = 0
+            j = len(self.children)-1
+            while True:
+                if j > self.focus_idx:
+                    if give[j] >= over:
+                        self.log("reducing %i at %i" % (over, j))
+                        give[j] -= over
+                        break
+                    else:
+                        self.log("removing %i at %i" % (give[j], j))
+                        over -= give[j]
+                        give[j] = 0
+                        j -= 1
+                if i < self.focus_idx:
+                    if give[i] >= over:
+                        if self.focus_idx <= j < len(self.children)-1:
+                            j += 1
+                            give[j] += give[i]
+                            over += give[i]
+                        over -= give[i]
+                        give[i] = 0
+                        i += 1
+                        if over <= 0:
+                            break
+                    else:
+                        self.log("removing %i at %i" % (give[i], i))
+                        over -= give[i]
+                        give[i] = 0
+                        i += 1
+
+
+        # if space left, give more to those who want
+        else:
+            want = [c.max_height-c.min_height for c in self.children]
+            i = 0
+            while sum(give) < height:
+                if want[i] > 0:
+                    want[i] -= 1
+                    give[i] += 1
+                i = (i+1)%len(self.children)
+
+        # step 2: assign windows
+        self.log("layout result %s" % str(give))
         top = 0
-        for c in self.children:
-            if top < height:
-                c.give_window(top=top, height=c.min_height,
+        for (c, h) in zip(self.children, give):
+            if h > 0:
+                c.give_window(top=top, height=h,
                               align_hor=self.align_hor[c])
-                top += c.min_height
+                top += h
             else:
                 c.take_window()
         

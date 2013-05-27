@@ -32,7 +32,7 @@ class Panel:
 
         self.parent = None
         self.children = []
-        self.focused_child_idx = 0
+        self.focus_idx = 0
         self.focused_child = None
 
         self.has_focus = False
@@ -63,7 +63,7 @@ class Panel:
         if not self.focused_child:
             if child._focusable:
                 self.focused_child = child
-                self.focused_child_idx = len(self.children)-1
+                self.focus_idx = len(self.children)-1
                 self.set_focus(self.has_focus)
         self._need_layout = True
 
@@ -246,19 +246,20 @@ class Panel:
         child.
         """
         amount = 1 if direction > 0 else -1
-        idx = self.focused_child_idx + amount
+        i = self.focus_idx + amount
 
         while True:
-            if idx not in range(len(self.children)):
+            if i not in range(len(self.children)):
                 return False
-            elif self.children[idx].set_focus(True):
+            elif self.children[i].set_focus(True):
                 self.focused_child.set_focus(False)
-                self.focused_child = self.children[idx]
-                self.focused_child_idx = idx
+                self.focused_child = self.children[i]
+                self.focus_idx = i
+                if not self.focused_child.win:
+                    self._need_layout = True
                 return True
             else:
-                idx += amount
-        # TODO _need_layout
+                i += amount
 
     def focus_next(self):
         return self._move_focus(1)
