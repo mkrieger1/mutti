@@ -63,10 +63,11 @@ class Dial(Panel):
         self.win.erase()
 
     def _draw(self, height, width):
-        self.addstr(0, 0, self.label_text)
+        attr = curses.A_BOLD if self.has_focus else curses.A_NORMAL
+        self.addstr(0, 0,
+                    self.label_text, attr)
         self.addstr(0, self.label_width,
-                    str(self.value).rjust(self.value_digits),
-                    curses.A_REVERSE if self.has_focus else curses.A_NORMAL)
+                    str(self.value).rjust(self.value_digits), attr)
         # TODO handle size < min_size
 
     def _handle_key(self, key):
