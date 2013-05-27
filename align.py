@@ -22,9 +22,9 @@ class VAlign(_Align):
 
     def _get_size(self):
         c = self.children[0]
-        height = max(self.max_height, c.max_height)
-        return (height, c.min_width,
-                height, c.max_width)
+        max_height = max(self.max_height, c.max_height)
+        return (c.min_height, c.min_width,
+                max_height,   c.max_width)
 
     def _layout(self, height, width):
         c = self.children[0]
@@ -42,9 +42,9 @@ class HAlign(_Align):
 
     def _get_size(self):
         c = self.children[0]
-        width = max(self.max_width, c.max_width)
-        return (c.min_height, width,
-                c.max_height, width)
+        max_width = max(self.max_width, c.max_width)
+        return (c.min_height, c.min_width,
+                c.max_height, max_width)
 
     def _layout(self, height, width):
         c = self.children[0]
