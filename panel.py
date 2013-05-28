@@ -143,12 +143,16 @@ class Panel:
                 str(self), used_height, used_width, top, left) +
             '- parent window %i %i' % (self.parent.win.getmaxyx()))
 
-        self._need_layout = True
+        self._layout(used_height, used_width)
+        self._need_layout = False
 
     def take_window(self):
         """
         Remove the window to make panel invisible.
         """
+        for c in self.children:
+            c.take_window()
+        self._need_layout = False
         self.win = None
 
     #--------------------------------------------------------------------
