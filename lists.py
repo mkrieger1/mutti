@@ -81,8 +81,8 @@ class PanelVList(_PanelList):
     """
     Vertical panel list.
     """
-    _next_keys = [curses.ascii.TAB, curses.KEY_DOWN, ord('j')]
-    _prev_keys = [curses.KEY_BTAB,  curses.KEY_UP,   ord('k')]
+    _next_keys = [curses.ascii.TAB, curses.KEY_DOWN, ord('j'), ord('w')]
+    _prev_keys = [curses.KEY_BTAB,  curses.KEY_UP,   ord('k'), ord('b')]
 
 
     def _get_size(self):
@@ -113,8 +113,8 @@ class PanelHList(_PanelList):
     """
     Horizontal panel list.
     """
-    _next_keys = [curses.ascii.TAB, curses.KEY_RIGHT, ord('l')]
-    _prev_keys = [curses.KEY_BTAB,  curses.KEY_LEFT, ord('h')]
+    _next_keys = [curses.ascii.TAB, curses.KEY_RIGHT, ord('l'), ord('w')]
+    _prev_keys = [curses.KEY_BTAB,  curses.KEY_LEFT,  ord('h'), ord('b')]
 
 
     def _get_size(self):

@@ -1,5 +1,6 @@
 import curses
 import curses.textpad
+import curses.ascii
 from panel import Panel
 
 class AbortEdit(Exception):
@@ -45,6 +46,7 @@ class Dial(Panel):
             self.dec(self.step)
         elif key == ord('s'):
             self.text_input()
+            return curses.ascii.TAB # focus next
         else:
             return key
 
