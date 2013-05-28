@@ -70,7 +70,7 @@ class Dial(Panel):
             statusbar.win.erase()
             statusbar.addstr(0, 0, self.label)
             statusbar.addstr(0, len(self.label)+1,
-                                str(self.value).rjust(self.digits))
+                             str(self.value).rjust(self.digits))
             helptext = "+/-/^A/^X, PgUp/PgDn/^U/^D to change, S to type"
             statusbar.addstr(0, width-len(helptext), helptext)
         return status_draw_task
