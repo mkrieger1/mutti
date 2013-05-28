@@ -34,29 +34,16 @@ class _PanelList(Panel):
         self.align_hor[panel] = align_hor # has no meaning in HList
         self.align_ver[panel] = align_ver # has no meaning in VList
 
-        
 
-class PanelVList(_PanelList):
-    """
-    Vertical panel list.
-    """
-    _next_keys = [curses.ascii.TAB, curses.KEY_DOWN, ord('j')]
-    _prev_keys = [curses.KEY_BTAB,  curses.KEY_UP,   ord('k')]
+    def _layout_distr(self, available, give, want):
+        """
+        Distribute available space to children, priority to focused.
 
-    def _get_size(self):
-        min_height = sum(c.min_height for c in self.children)
-        min_width = max(c.min_width for c in self.children)
-        max_height = sum(c.max_height for c in self.children)
-        max_width = max(c.max_width for c in self.children)
-        return (min_height, min_width, max_height, max_width)
-
-    def _layout(self, height, width):
-        # initialize by giving the minimum to each child
-        give = [c.min_height for c in self.children]
-
-        # if already too large, remove children, but keep the focused
-        if height < sum(give):
-            over = sum(give) - height
+        Result list "give" is modified in-place.
+        """
+        # not enough space for every child -> trim
+        if available < sum(give):
+            over = sum(give) - available
             i = 0
             j = len(self.children)-1
             while True:
@@ -79,18 +66,38 @@ class PanelVList(_PanelList):
                     i += 1
                     if over <= 0:
                         break
-
-        # if space left, give more to those who want
+        # enough space for every child -> give more to those who want
         else:
-            want = [c.max_height-c.min_height for c in self.children]
             i = 0
-            while sum(give) < height:
+            while sum(give) < available:
                 if want[i] > 0:
                     want[i] -= 1
                     give[i] += 1
                 i = (i+1)%len(self.children)
 
-        # step 2: assign windows
+        
+
+class PanelVList(_PanelList):
+    """
+    Vertical panel list.
+    """
+    _next_keys = [curses.ascii.TAB, curses.KEY_DOWN, ord('j')]
+    _prev_keys = [curses.KEY_BTAB,  curses.KEY_UP,   ord('k')]
+
+
+    def _get_size(self):
+        min_height = sum(c.min_height for c in self.children)
+        min_width = max(c.min_width for c in self.children)
+        max_height = sum(c.max_height for c in self.children)
+        max_width = max(c.max_width for c in self.children)
+        return (min_height, min_width, max_height, max_width)
+
+
+    def _layout(self, height, width):
+        give = [c.min_height for c in self.children]
+        want = [c.max_height-c.min_height for c in self.children]
+        self._layout_distr(height, give, want)
+
         top = 0
         for (c, h) in zip(self.children, give):
             if h > 0:
@@ -101,12 +108,14 @@ class PanelVList(_PanelList):
                 c.take_window()
         
 
+
 class PanelHList(_PanelList):
     """
     Horizontal panel list.
     """
     _next_keys = [curses.ascii.TAB, curses.KEY_RIGHT, ord('l')]
     _prev_keys = [curses.KEY_BTAB,  curses.KEY_LEFT, ord('h')]
+
 
     def _get_size(self):
         min_height = max(c.min_height for c in self.children)
@@ -115,13 +124,18 @@ class PanelHList(_PanelList):
         max_width = sum(c.max_width for c in self.children)
         return (min_height, min_width, max_height, max_width)
 
-    def _layout(self, height, width): # TODO use focus
+
+    def _layout(self, height, width):
+        give = [c.min_width for c in self.children]
+        want = [c.max_width-c.min_width for c in self.children]
+        self._layout_distr(width, give, want)
+
         left = 0
-        for c in self.children:
-            if left < width:
-                c.give_window(left=left, width=c.min_width,
+        for (c, w) in zip(self.children, give):
+            if w > 0:
+                c.give_window(left=left, width=w,
                               align_ver=self.align_ver[c])
-                left += c.min_width
+                left += w
             else:
                 c.take_window()
 

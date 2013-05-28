@@ -255,7 +255,10 @@ class Panel:
                 self.focused_child.set_focus(False)
                 self.focused_child = self.children[i]
                 self.focus_idx = i
-                if not self.focused_child.win:
+                fc = self.focused_child
+                if (not fc.win or
+                    fc.win.getmaxyx()[0] < fc.min_height or
+                    fc.win.getmaxyx()[1] < fc.min_width):
                     self._need_layout = True
                 return True
             else:
