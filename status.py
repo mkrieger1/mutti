@@ -5,18 +5,18 @@ class Status(Panel):
     """A widget to display one line of text."""
 
     _focusable = False
+    _max_children = 0
 
-    def __init__(self):
-        Panel.__init__(self, min_height=1, max_height=1, max_width=80)
-        self.text = ''
-
-    def set(self, text):
-        self.text = text
+    def __init__(self, width=None):
+        Panel.__init__(self, min_height=1, max_height=1, max_width=width)
 
     def _erase(self, height, width):
-        self.win.erase()
+        pass
 
     def _draw(self, height, width):
         self.win.bkgd(' ', curses.A_REVERSE)
-        self.addstr(0, 0, self.text)
+        try:
+            self._draw_task(self)
+        except:
+            pass
 

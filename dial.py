@@ -29,7 +29,6 @@ class Dial(Panel):
         self.set(value)
 
         self.label = label
-        #self.statuspanel = statuspanel
 
 
     #--------------------------------------------------------------------
@@ -65,6 +64,32 @@ class Dial(Panel):
         self.addstr(0, width-self.digits,
                     str(self.value).rjust(self.digits-1), attr)
 
+    def _get_status_draw_task(self):
+        def status_draw_task(statusbar):
+            _, width = statusbar.win.getmaxyx()
+            statusbar.win.erase()
+            statusbar.addstr(0, 0, self.label)
+            statusbar.addstr(0, len(self.label)+1,
+                                str(self.value).rjust(self.digits))
+            helptext = "+/-/^A/^X, PgUp/PgDn/^U/^D to change, S to type"
+            statusbar.addstr(0, width-len(helptext), helptext)
+        return status_draw_task
+        # We have just created a function which draws onto a given
+        # statusbar. We now hand this function to our actual statusbar so
+        # it will be executed when the statusbar _draw method is called.
+
+    #def set_status(self):
+    #    bar_len = 20
+    #    bar_pos = ((self.value - self.vmin) * bar_len / 
+    #               (self.vmax  - self.vmin))
+    #    bar = '#'*bar_pos + '-'*(bar_len-bar_pos)
+    #    left = ' '.join([self.label,
+    #                     str(self.value).rjust(self.digits),
+    #                     bar])
+    #    right = '+/-, PageUp/PageDn to change, S to type'
+    #    padding = ' '*(statuspanel.win.getmaxyx()[1]-len(left)-len(right))
+    #    self.statuspanel.set(left + padding + right)
+
 
     #--------------------------------------------------------------------
     # custom methods
@@ -82,18 +107,6 @@ class Dial(Panel):
 
     def dec(self, amount):
         self.set(self.value-amount)
-
-    #def set_status(self):
-    #    bar_len = 20
-    #    bar_pos = ((self.value - self.vmin) * bar_len / 
-    #               (self.vmax  - self.vmin))
-    #    bar = '#'*bar_pos + '-'*(bar_len-bar_pos)
-    #    left = ' '.join([self.label,
-    #                     str(self.value).rjust(self.digits),
-    #                     bar])
-    #    right = '+/-, PageUp/PageDn to change, S to type'
-    #    padding = ' '*(statuspanel.win.getmaxyx()[1]-len(left)-len(right))
-    #    self.statuspanel.set(left + padding + right)
 
     def _validator(self, key, *args):
         if key == ord('q'):

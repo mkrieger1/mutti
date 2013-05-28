@@ -201,6 +201,10 @@ class Panel:
         for child in self.children:
             child.redraw()
         self._draw(height, width)
+
+        if self.has_focus:
+            self._draw_status()
+
         self.win.noutrefresh()
 
     def _layout(self, height, width):
@@ -226,6 +230,21 @@ class Panel:
         Draw the foreground over the children.
         """
         pass # implement it in subclass, if needed
+
+    def _draw_status(self):
+        try:
+            self._status._draw_task = self._get_status_draw_task()
+            self._status.redraw()
+        except:
+            pass
+
+    def _get_status_draw_task(self):
+        """
+        Create a function which draws onto the status bar.
+
+        The status bar must be the only parameter of the function.
+        """
+        return None # implement it in subclass, if needed
 
     #--------------------------------------------------------------------
 
