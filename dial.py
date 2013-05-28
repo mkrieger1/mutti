@@ -45,8 +45,8 @@ class Dial(Panel):
         elif key in [curses.KEY_NPAGE, ord('d')-96]:
             self.dec(self.step)
         elif key == ord('s'):
-            self.text_input()
-            return curses.ascii.TAB # focus next
+            if self.text_input():
+                return curses.ascii.TAB # focus next
         else:
             return key
 
@@ -111,11 +111,12 @@ class Dial(Panel):
         try:
             b.edit(self._validator)
         except AbortEdit:
-            return
+            return False
         finally:
             curses.curs_set(0)
         try:
             self.set(int(b.gather(), 0))
+            return True
         except ValueError:
-            pass
+            return False
 
