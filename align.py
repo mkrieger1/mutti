@@ -28,7 +28,7 @@ class VAlign(_Align):
 
     def _layout(self, height, width):
         c = self.children[0]
-        c.give_window(align_ver=self.align)
+        c.give_window(height, width, align_ver=self.align)
 
 
 class HAlign(_Align):
@@ -48,4 +48,5 @@ class HAlign(_Align):
 
     def _layout(self, height, width):
         c = self.children[0]
-        c.give_window(align_hor=self.align)
+        c.give_window(height, width, align_hor=self.align)
+
