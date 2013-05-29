@@ -1,5 +1,6 @@
 import curses
 from panel import Panel
+from colors import color_attr
 
 class QuitScreen(Exception):
     pass
@@ -23,6 +24,7 @@ class Screen(Panel):
 
     def _erase(self, height, width):
         self.win.erase()
+        self.fill(height, width, '/ ', color_attr("green"))
 
     def _draw(self, height, width):
         pass
