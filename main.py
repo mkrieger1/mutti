@@ -10,6 +10,7 @@ from align import VAlign, HAlign
 
 
 def main(stdscr, *main_args):
+    curses.use_default_colors()
     f = open('loglog.log', 'w')
     mainscreen = Screen(stdscr)
 
