@@ -1,20 +1,23 @@
 import curses
 
 _pairs = {(-1, -1): 0}
+_use_default_colors = None
 
 def color_attr(fg=None, bg=None):
     global _pairs
+    global _use_default_colors
 
     # check if curses.use_default_colors() was called
-    use_default_colors = True
-    try:
-        curses.init_pair(0, -1, -1)
-    except curses.error:
-        use_default_colors = False
+    if not _use_default_colors:
+        try:
+            curses.init_pair(0, -1, -1)
+            _use_default_colors = True
+        except curses.error:
+            _use_default_colors = False
 
     # replace defaults
-    fg = fg or (-1 if use_default_colors else "white")
-    bg = bg or (-1 if use_default_colors else "black")
+    fg = fg or (-1 if _use_default_colors else "white")
+    bg = bg or (-1 if _use_default_colors else "black")
 
     # convert color names to numbers
     # available names:
