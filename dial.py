@@ -2,6 +2,7 @@ import curses
 import curses.textpad
 import curses.ascii
 from panel import Panel
+from colors import color_attr
 
 class AbortEdit(Exception):
     pass
@@ -59,24 +60,23 @@ class Dial(Panel):
         if len(labelstr) > width-self.digits:
             labelstr = labelstr[:width-self.digits-1]+'~'
 
+        c = 0 if self.value != 0 else color_attr("blue")
         self.addstr(0, 0,
-                    labelstr, attr)
+                    labelstr, attr|c)
         self.addstr(0, width-self.digits,
-                    str(self.value).rjust(self.digits-1), attr)
+                    str(self.value).rjust(self.digits-1),
+                    attr|color_attr("yellow"))
 
     def _get_status_draw_task(self):
         def status_draw_task(statusbar):
             _, width = statusbar.win.getmaxyx()
             statusbar.win.erase()
-            statusbar.addstr(0, 0, self.label)
-            statusbar.addstr(0, len(self.label)+1,
-                             str(self.value).rjust(self.digits))
+            statustext = "%s = %i" % (self.label, self.value)
+            statusbar.addstr(0, 0, statustext, curses.A_BOLD)
             helptext = "+/-/^A/^X, PgUp/PgDn/^U/^D to change, S to type"
-            statusbar.addstr(0, width-len(helptext), helptext)
+            if len(statustext) + len(helptext) < width:
+                statusbar.addstr(0, width-len(helptext), helptext)
         return status_draw_task
-        # We have just created a function which draws onto a given
-        # statusbar. We now hand this function to our actual statusbar so
-        # it will be executed when the statusbar _draw method is called.
 
     #def set_status(self):
     #    bar_len = 20
