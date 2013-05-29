@@ -27,7 +27,7 @@ class MyPanel(Panel):
 
 
     #--------------------------------------------------------------------
-    # things that need to be implemented only if we have any children
+    # things that need to be implemented only if there are any children
     #--------------------------------------------------------------------
     def _get_size(self):
         """
@@ -70,4 +70,12 @@ class MyPanel(Panel):
         Draw the foreground over the children.
         """
         pass # draw the foreground
+
+    def _get_status_draw_task(self):
+        """
+        Create a function which draws onto the status bar.
+
+        The status bar must be the only parameter of the function.
+        """
+        return None
 
