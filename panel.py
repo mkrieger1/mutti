@@ -309,8 +309,8 @@ class Panel:
             except curses.error:
                 pass
 
-    def fill(self, height, width, char, top=0, left=0):
+    def fill(self, height, width, char, attr=curses.A_NORMAL, top=0, left=0):
         for y in range(height):
             for x in range(width):
-                self.addch(y+top, x+left, char)
+                self.addch(y+top, x+left, char, attr)
 
