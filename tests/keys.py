@@ -28,8 +28,8 @@ def showkey(win, key):
         win.addstr(3, 22, name[0])
 
     # curses.ascii name
-    name = [name for name in curses.ascii.__dict__ if name.startswith("") and
-                                                      key == curses.ascii.__dict__[name]]
+    name = [name for name in curses.ascii.__dict__
+            if name.startswith("") and key == curses.ascii.__dict__[name]]
     if name:
         win.addstr(3, 42, name[0])
 
