@@ -8,8 +8,8 @@ class _PanelList(Panel):
     """
     def __init__(self):
         Panel.__init__(self)
-        self.align_hor = {}
-        self.align_ver = {}
+        self._align_hor = {}
+        self._align_ver = {}
 
     def _erase(self, height, width):
         self.win.erase()
@@ -31,8 +31,8 @@ class _PanelList(Panel):
 
     def adopt(self, panel, align_hor='left', align_ver='top'):
         Panel.adopt(self, panel)
-        self.align_hor[panel] = align_hor # has no meaning in HList
-        self.align_ver[panel] = align_ver # has no meaning in VList
+        self._align_hor[panel] = align_hor # has no meaning in HList
+        self._align_ver[panel] = align_ver # has no meaning in VList
 
 
     def _layout_distr(self, available, give, want):
@@ -102,7 +102,7 @@ class PanelVList(_PanelList):
         for (c, h) in zip(self.children, give):
             if h > 0:
                 c.give_window(top=top, height=h,
-                              align_hor=self.align_hor[c])
+                              align_hor=self._align_hor[c])
                 top += h
             else:
                 c.take_window()
@@ -134,7 +134,7 @@ class PanelHList(_PanelList):
         for (c, w) in zip(self.children, give):
             if w > 0:
                 c.give_window(left=left, width=w,
-                              align_ver=self.align_ver[c])
+                              align_ver=self._align_ver[c])
                 left += w
             else:
                 c.take_window()

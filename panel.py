@@ -261,12 +261,32 @@ class Panel:
             success |= self.focused_child.set_focus(has_focus)
         return success
 
+    def _move_focus_to(self, i):
+        """
+        Move the focus to the i-th child.
+
+        Returns True if successful, or False if there is no focusable
+        i-th child.
+        """
+        if self.children[i].set_focus(True):
+            self.focused_child.set_focus(False)
+            self.focused_child = self.children[i]
+            self.focus_idx = i
+            fc = self.focused_child
+            if (not fc.win or
+                fc.win.getmaxyx()[0] < fc.min_height or
+                fc.win.getmaxyx()[1] < fc.min_width):
+                self._need_layout = True
+            return True
+        else:
+            return False
+
     def _move_focus(self, direction):
         """
         Move the focus to next or previous child.
 
         Returns True if successful, or False if there is no focusable
-        child.
+        next or previous child.
         """
         amount = 1 if direction > 0 else -1
         i = self.focus_idx + amount
@@ -274,15 +294,7 @@ class Panel:
         while True:
             if i not in range(len(self.children)):
                 return False
-            elif self.children[i].set_focus(True):
-                self.focused_child.set_focus(False)
-                self.focused_child = self.children[i]
-                self.focus_idx = i
-                fc = self.focused_child
-                if (not fc.win or
-                    fc.win.getmaxyx()[0] < fc.min_height or
-                    fc.win.getmaxyx()[1] < fc.min_width):
-                    self._need_layout = True
+            elif self._move_focus_to(i):
                 return True
             else:
                 i += amount
