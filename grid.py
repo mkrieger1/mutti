@@ -1,6 +1,7 @@
 import curses
 import curses.ascii
 from panel import Panel, PanelError
+from lists import _layout_distr
 
 
 class Grid(Panel):
@@ -24,6 +25,7 @@ class Grid(Panel):
         self._align_ver[pos] = align_ver
         self.children.sort(key=lambda c: self._pos[c])
 
+    #--------------------------------------------------------------------
 
     def _handle_key(self, key):
         if key in [curses.ascii.TAB, ord('w')]:
@@ -69,7 +71,7 @@ class Grid(Panel):
     def focus_right(self):
         return self._move_focus_grid(0, 1)
 
-
+    #--------------------------------------------------------------------
 
     def _row_min_height(self, row):
         return max([0]+[c.min_height for c in self.children
@@ -101,24 +103,35 @@ class Grid(Panel):
 
 
     def _layout(self, height, width):
-        self.log("layout %i %i" % (height, width))
+        give_row = [self._row_min_height(row)
+                    for row in range(self._rows)]
+        want_row = [self._row_max_height(row)-self._row_min_height(row)
+                    for row in range(self._rows)]
+        give_col = [self._col_min_width(col)
+                    for col in range(self._columns)]
+        want_col = [self._col_max_width(col)-self._col_min_width(col)
+                    for col in range(self._columns)]
+        idx_row, idx_col = self._pos[self.focused_child]
+
+        _layout_distr(idx_row, height, give_row, want_row)
+        _layout_distr(idx_col, width,  give_col, want_col)
+
         top = 0
         for row in range(self._rows):
-            h = self._row_min_height(row)
+            h = give_row[row]
             left = 0
             for col in range(self._columns):
-                w = self._col_min_width(col)
+                w = give_col[col]
                 _c = [c for c in self.children
                       if self._pos[c] == (row, col)]
                 if _c:
                     c = _c[0]
-                    try:
+                    if h > 0 and w > 0:
                         c.give_window(h, w, top, left)
-                    except PanelError:
-                        self.log("fail %i %i %i %i" % (h, w, top, left))
+                    else:
+                        c.take_window()
                 left += w
             top += h
-        # TODO
 
 
     def _erase(self, height, width):
