@@ -26,9 +26,7 @@ class Tabs(Panel):
 
     def _handle_key(self, key):
         if key in map(ord, '123456789'):
-            self.log("handling %i (%s)" % (key, chr(key)))
             i = int(chr(key))-1
-            self.log("i = %i" % i)
             if i in range(len(self.children)):
                 if i == self.focus_idx:
                     return None
