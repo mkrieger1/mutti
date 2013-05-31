@@ -105,10 +105,11 @@ class PanelVList(_PanelList):
         want = [c.max_height-c.min_height for c in self.children]
         _layout_distr(self.focus_idx, height, give, want)
 
+        w = max(c.min_width for c in self.children)
         top = 0
         for (c, h) in zip(self.children, give):
             if h > 0:
-                c.give_window(top=top, height=h,
+                c.give_window(top=top, height=h, width=w,
                               align_hor=self._align_hor[c])
                 top += h
             else:
@@ -136,10 +137,11 @@ class PanelHList(_PanelList):
         want = [c.max_width-c.min_width for c in self.children]
         _layout_distr(self.focus_idx, width, give, want)
 
+        h = max(c.min_height for c in self.children)
         left = 0
         for (c, w) in zip(self.children, give):
             if w > 0:
-                c.give_window(left=left, width=w,
+                c.give_window(left=left, height=h, width=w,
                               align_ver=self._align_ver[c])
                 left += w
             else:
