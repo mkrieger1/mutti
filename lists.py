@@ -2,6 +2,50 @@ import curses
 import curses.ascii
 from panel import Panel
 
+#--------------------------------------------------------------------
+
+def _layout_distr(focus_idx, available, give, want):
+    """
+    Distribute available space to children, priority to focused.
+
+    Result list "give" is modified in-place.
+    """
+    # not enough space for every child -> trim
+    if available < sum(give):
+        over = sum(give) - available
+        i = 0
+        j = len(give)-1
+        while True:
+            if j > focus_idx:
+                if give[j] >= over:
+                    give[j] -= over
+                    break
+                else:
+                    over -= give[j]
+                    give[j] = 0
+                    j -= 1
+            if i < focus_idx:
+                if give[i] >= over:
+                    if focus_idx <= j < len(give)-1:
+                        j += 1
+                        give[j] += give[i]
+                        over += give[i]
+                over -= give[i]
+                give[i] = 0
+                i += 1
+                if over <= 0:
+                    break
+    # enough space for every child -> give more to those who want
+    else:
+        i = 0
+        while sum(give) < available:
+            if want[i] > 0:
+                want[i] -= 1
+                give[i] += 1
+            i = (i+1)%len(give)
+
+#--------------------------------------------------------------------
+
 class _PanelList(Panel):
     """
     Generic panel list (vertical or horizontal).
@@ -34,48 +78,7 @@ class _PanelList(Panel):
         self._align_hor[panel] = align_hor # has no meaning in HList
         self._align_ver[panel] = align_ver # has no meaning in VList
 
-
-    def _layout_distr(self, available, give, want):
-        """
-        Distribute available space to children, priority to focused.
-
-        Result list "give" is modified in-place.
-        """
-        # not enough space for every child -> trim
-        if available < sum(give):
-            over = sum(give) - available
-            i = 0
-            j = len(self.children)-1
-            while True:
-                if j > self.focus_idx:
-                    if give[j] >= over:
-                        give[j] -= over
-                        break
-                    else:
-                        over -= give[j]
-                        give[j] = 0
-                        j -= 1
-                if i < self.focus_idx:
-                    if give[i] >= over:
-                        if self.focus_idx <= j < len(self.children)-1:
-                            j += 1
-                            give[j] += give[i]
-                            over += give[i]
-                    over -= give[i]
-                    give[i] = 0
-                    i += 1
-                    if over <= 0:
-                        break
-        # enough space for every child -> give more to those who want
-        else:
-            i = 0
-            while sum(give) < available:
-                if want[i] > 0:
-                    want[i] -= 1
-                    give[i] += 1
-                i = (i+1)%len(self.children)
-
-        
+#--------------------------------------------------------------------
 
 class PanelVList(_PanelList):
     """
@@ -96,7 +99,7 @@ class PanelVList(_PanelList):
     def _layout(self, height, width):
         give = [c.min_height for c in self.children]
         want = [c.max_height-c.min_height for c in self.children]
-        self._layout_distr(height, give, want)
+        _layout_distr(self.focus_idx, height, give, want)
 
         top = 0
         for (c, h) in zip(self.children, give):
@@ -106,7 +109,6 @@ class PanelVList(_PanelList):
                 top += h
             else:
                 c.take_window()
-        
 
 
 class PanelHList(_PanelList):
@@ -128,7 +130,7 @@ class PanelHList(_PanelList):
     def _layout(self, height, width):
         give = [c.min_width for c in self.children]
         want = [c.max_width-c.min_width for c in self.children]
-        self._layout_distr(width, give, want)
+        _layout_distr(self.focus_idx, width, give, want)
 
         left = 0
         for (c, w) in zip(self.children, give):
