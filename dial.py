@@ -71,7 +71,7 @@ class Dial(Panel):
         def status_draw_task(statusbar):
             _, width = statusbar.win.getmaxyx()
             statusbar.win.erase()
-            statustext = "%s = %i" % (self.label, self.value)
+            statustext = "%s: %i" % (self.label, self.value)
             statusbar.addstr(0, 0, statustext, curses.A_BOLD)
             helptext = "+/-/^A/^X, PgUp/PgDn/^U/^D to change, S to type"
             if len(statustext) + len(helptext) < width:
