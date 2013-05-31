@@ -10,8 +10,12 @@ def _layout_distr(focus_idx, available, give, want):
 
     Result list "give" is modified in-place.
     """
+    # not even enough space for focused child
+    if available < give[focus_idx]:
+        for i in range(len(give)):
+            give[i] = 0 if i != focus_idx else available
     # not enough space for every child -> trim
-    if available < sum(give):
+    elif available < sum(give):
         over = sum(give) - available
         i = 0
         j = len(give)-1
