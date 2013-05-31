@@ -8,7 +8,7 @@ class Status(Panel):
     _max_children = 0
 
     def __init__(self, width=None):
-        Panel.__init__(self, min_height=1, max_height=1, max_width=width)
+        Panel.__init__(self, min_height=1, max_height=1, min_width=width)
 
     def _erase(self, height, width):
         pass
