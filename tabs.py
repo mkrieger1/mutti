@@ -2,6 +2,7 @@ import curses
 import curses.ascii
 from panel import Panel
 from lists import _layout_distr
+from colors import color_attr
 
 
 class Tabs(Panel):
@@ -29,7 +30,9 @@ class Tabs(Panel):
             i = int(chr(key))-1
             self.log("i = %i" % i)
             if i in range(len(self.children)):
-                if not self._move_focus_to(i):
+                if i == self.focus_idx:
+                    return None
+                elif not self._move_focus_to(i):
                     return key
                 else:
                     self._need_layout = True
@@ -52,7 +55,9 @@ class Tabs(Panel):
         h = height-2
         w = width
         if h > 0 and w > 0:
-            self.focused_child.give_window(h, w, top=2)
+            self.focused_child.give_window(h, w, top=2,
+                                           align_hor='center',
+                                           align_ver='center')
         else:
             self.focused_child.take_window()
 
@@ -66,7 +71,16 @@ class Tabs(Panel):
             self.addch(1, x, curses.ACS_HLINE)
         left = 0
         for (i, label) in enumerate(self._labels):
-            attr = curses.A_BOLD if i == self.focus_idx else 0
-            self.addstr(0, left, label, attr)
-            left += len(label)+1
+            L = len(label)
+            self.addch(0, left+L+2, curses.ACS_VLINE)
+            self.addch(1, left+L+2, curses.ACS_BTEE)
+            if i == self.focus_idx:
+                attr = curses.A_BOLD
+                self.addch(1, left-1, curses.ACS_LRCORNER)
+                self.addstr(1, left, ' '*(L+2))
+                self.addch(1, left+L+2, curses.ACS_LLCORNER)
+            else:
+                attr = curses.A_NORMAL
+            self.addstr(0, left+1, label, attr)
+            left += len(label)+3
 
