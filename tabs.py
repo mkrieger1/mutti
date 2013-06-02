@@ -68,17 +68,23 @@ class Tabs(Panel):
         for x in range(width):
             self.addch(1, x, curses.ACS_HLINE)
         left = 0
+        give = [len(label)+3 for label in self._labels]
+        # one space left, one space and one line right
+        want = [0 for label in self._labels]
+        _layout_distr(self.focus_idx, width, give, want)
         for (i, label) in enumerate(self._labels):
-            L = len(label)
-            self.addch(0, left+L+2, curses.ACS_VLINE)
-            self.addch(1, left+L+2, curses.ACS_BTEE)
-            if i == self.focus_idx:
-                attr = curses.A_BOLD
-                self.addch(1, left-1, curses.ACS_LRCORNER)
-                self.addstr(1, left, ' '*(L+2))
-                self.addch(1, left+L+2, curses.ACS_LLCORNER)
-            else:
-                attr = curses.A_NORMAL
-            self.addstr(0, left+1, label, attr)
-            left += len(label)+3
+            L = give[i]
+            if L > 0:
+                self.addch(0, left+L-1, curses.ACS_VLINE)
+                self.addch(1, left+L-1, curses.ACS_BTEE)
+                if i == self.focus_idx:
+                    attr = curses.A_BOLD
+                    self.addch(1, left-1, curses.ACS_LRCORNER)
+                    self.addstr(1, left, ' '*L)
+                    self.addch(1, left+L-1, curses.ACS_LLCORNER)
+                else:
+                    attr = curses.A_NORMAL
+                labelstr = label[:L-3]+'~' if L < len(label) else label
+                self.addstr(0, left+1, labelstr, attr)
+            left += L
 
