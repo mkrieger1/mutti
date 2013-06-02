@@ -42,7 +42,7 @@ def _layout_distr(focus_idx, available, give, want):
     # enough space for every child -> give more to those who want
     else:
         i = 0
-        while sum(give) < available:
+        while sum(give) < available and sum(want) > 0:
             if want[i] > 0:
                 want[i] -= 1
                 give[i] += 1
@@ -93,6 +93,8 @@ class PanelVList(_PanelList):
 
 
     def _get_size(self):
+        if not self.children:
+            return
         min_height = sum(c.min_height for c in self.children)
         min_width = max(c.min_width for c in self.children)
         max_height = sum(c.max_height for c in self.children)
@@ -101,6 +103,8 @@ class PanelVList(_PanelList):
 
 
     def _layout(self, height, width):
+        if not self.children:
+            return
         give = [c.min_height for c in self.children]
         want = [c.max_height-c.min_height for c in self.children]
         _layout_distr(self.focus_idx, height, give, want)
@@ -125,6 +129,8 @@ class PanelHList(_PanelList):
 
 
     def _get_size(self):
+        if not self.children:
+            return
         min_height = max(c.min_height for c in self.children)
         min_width = sum(c.min_width for c in self.children)
         max_height = max(c.max_height for c in self.children)
@@ -133,6 +139,8 @@ class PanelHList(_PanelList):
 
 
     def _layout(self, height, width):
+        if not self.children:
+            return
         give = [c.min_width for c in self.children]
         want = [c.max_width-c.min_width for c in self.children]
         _layout_distr(self.focus_idx, width, give, want)
