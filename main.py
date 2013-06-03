@@ -76,6 +76,8 @@ def build_panels(stdscr):
     tabs.adopt(vlist, "first VList")
     tabs.adopt(vlist2, "second VList")
     tabs.adopt(g, "Grid")
+    for i in range(6):
+        tabs.adopt(PanelVList(),  "dummy list %i" % i)
     tabs._log = f
     
     vlist_main = PanelVList()
