@@ -35,7 +35,7 @@ class Screen(Panel):
 
     def _erase(self, height, width):
         self.win.erase()
-        self.fill(height, width, '/ ', color_attr("green"))
+        self.fill(height, width, '/~', color_attr("green"))
 
     def _draw(self, height, width):
         pass
