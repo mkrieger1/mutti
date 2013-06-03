@@ -19,7 +19,7 @@ def build_panels(stdscr):
     mainscreen._log = f
 
     statusbar = mainscreen.statusbar
-    statusbar._log = f
+    #statusbar._log = f
 
     tabs = Tabs()
 
@@ -43,18 +43,18 @@ def build_panels(stdscr):
 
     vlist2 = PanelVList()
     #vlist2._log = f
-    for i in range(5):
+    for i in range(10):
         t = Toggle("Toggle %02i"%i)
         t._status = statusbar
         #t._log = f
         vlist2.adopt(t)
     for i in range(5):
-        t = Toggle("ToToToggle %02i"%i)
+        t = Toggle("InvisibleToggle %02i"%i, draw_label=False)
         t._status = statusbar
         #t._log = f
         vlist2.adopt(t)
-    for i in range(5):
-        t = Toggle("InvisibleToggle %02i"%i, draw_label=False)
+    for i in range(10):
+        t = Toggle("ToToToggle %02i"%i)
         t._status = statusbar
         #t._log = f
         vlist2.adopt(t)
@@ -79,11 +79,8 @@ def build_panels(stdscr):
     for i in range(6):
         tabs.adopt(PanelVList(),  "dummy list %i" % i)
     tabs._log = f
-    
-    vlist_main = PanelVList()
-    vlist_main.adopt(tabs)
 
-    mainscreen.adopt(vlist_main)
+    mainscreen.adopt(tabs)
 
     return mainscreen
 
