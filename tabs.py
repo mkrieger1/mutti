@@ -17,25 +17,30 @@ class Tabs(Panel):
     def __init__(self, *args):
         Panel.__init__(self, *args)
         self._labels = []
+        self._last_distr = None
 
     def adopt(self, panel, label):
         Panel.adopt(self, panel)
-        self._labels.append(label)
+        self._labels.append("%i: %s" % (len(self._labels)+1, label))
 
     #--------------------------------------------------------------------
 
     def _handle_key(self, key):
         if key in map(ord, '123456789'):
             i = int(chr(key))-1
-            if i in range(len(self.children)):
-                if i == self.focus_idx:
-                    return None
-                elif not self._move_focus_to(i):
-                    return key
-                else:
-                    self._need_layout = True
+        elif key in map(ord, 'tW'):
+            i = self.focus_idx + 1
+        elif key in map(ord, 'TB'):
+            i = self.focus_idx - 1
         else:
             return key
+        if i in range(len(self.children)):
+            if i == self.focus_idx:
+                return None
+            elif not self._move_focus_to(i):
+                return key
+            else:
+                self._need_layout = True
 
     #--------------------------------------------------------------------
 
@@ -65,26 +70,47 @@ class Tabs(Panel):
 
 
     def _draw(self, height, width):
+        """
+        Draw the foreground (tab labels and lines).
+        """
+        # step 1: distribute the available width
+        fi = self.focus_idx
+        if (not self._last_distr or
+         self._last_distr[0] != width or
+         self._last_distr[1][fi] != len(self._labels[fi])+3):
+            # for each label: " label |"
+            give = [len(label)+3 for label in self._labels]
+            _layout_distr(fi, width, give)
+            self._last_distr = (width, give)
+        else:
+            give = self._last_distr[1]
+
+        # step 2: draw labels and lines
         for x in range(width):
             self.addch(1, x, curses.ACS_HLINE)
         left = 0
-        give = [len(label)+3 for label in self._labels]
-        # one space left, one space and one line right
-        want = [0 for label in self._labels]
-        _layout_distr(self.focus_idx, width, give, want)
         for (i, label) in enumerate(self._labels):
-            L = give[i]
-            if L > 0:
-                self.addch(0, left+L-1, curses.ACS_VLINE)
-                self.addch(1, left+L-1, curses.ACS_BTEE)
-                if i == self.focus_idx:
+            w = give[i] # given width
+            L = w-3     # available for the label
+            b = len(label) # needed for the label
+            if w > 0:
+                if i == fi:
                     attr = curses.A_BOLD
                     self.addch(1, left-1, curses.ACS_LRCORNER)
-                    self.addstr(1, left, ' '*L)
-                    self.addch(1, left+L-1, curses.ACS_LLCORNER)
+                    self.addstr(1, left, ' '*w)
                 else:
                     attr = curses.A_NORMAL
-                labelstr = label[:L-3]+'~' if L < len(label) else label
+                if L < b:
+                    labelstr = label[:L].rstrip()+'~'
+                else:
+                    labelstr = label
+                    self.addch(0, left+w-1, curses.ACS_VLINE)
+                    self.addch(1, left+w-1, curses.ACS_LLCORNER if i == fi
+                                       else curses.ACS_BTEE)
                 self.addstr(0, left+1, labelstr, attr)
-            left += L
+            left += w
+        if give[0] < len(self._labels[0])+3:
+            self.addch(1, 0, curses.ACS_LARROW)
+        if give[-1] < len(self._labels[-1])+3:
+            self.addch(1, width-1, curses.ACS_RARROW)
 

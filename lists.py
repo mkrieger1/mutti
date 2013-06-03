@@ -4,12 +4,14 @@ from panel import Panel
 
 #--------------------------------------------------------------------
 
-def _layout_distr(focus_idx, available, give, want):
+def _layout_distr(focus_idx, available, give, want=None):
     """
     Distribute available space to children, priority to focused.
 
     Result list "give" is modified in-place.
     """
+    if not want:
+        want = [0 for g in give]
     # not even enough space for focused child
     if available < give[focus_idx]:
         for i in range(len(give)):
