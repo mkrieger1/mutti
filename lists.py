@@ -111,15 +111,43 @@ class PanelVList(_PanelList):
         want = [c.max_height-c.min_height for c in self.children]
         _layout_distr(self.focus_idx, height, give, want)
 
+        arrows = [0, 0]
+        for i in [0, -1]:
+            if give[i] < self.children[i].min_height:
+                arrows[i] = 1
+
         w = max(c.min_width for c in self.children)
         top = 0
         for (c, h) in zip(self.children, give):
             if h > 0:
-                c.give_window(top=top, height=h, width=w,
+                uparrow = top == 0 and arrows[0]
+                dnarrow = h+top == height and arrows[1]
+                wi = w-1 if uparrow or dnarrow else w
+                if uparrow:
+                    wi -= 1
+                if dnarrow:
+                    wi -= 1
+                if height > 1:
+                    wi = max(wi, w-2)
+                c.give_window(top=top, height=h, width=wi,
                               align_hor=self._align_hor[c])
                 top += h
             else:
                 c.take_window()
+
+
+    def _draw(self, height, width):
+        c = self.children[0]
+        uparrow = not c.win or c.win.getmaxyx()[0] < c.min_height
+        c = self.children[-1]
+        dnarrow = not c.win or c.win.getmaxyx()[0] < c.min_height
+
+        if uparrow:
+            xup = width-1 if height > 1 or not dnarrow else width-2
+            self.addch(0, xup, curses.ACS_UARROW)
+        if dnarrow:
+            xdn = width-1
+            self.addch(height-1, xdn, curses.ACS_DARROW)
 
 
 class PanelHList(_PanelList):
