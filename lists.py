@@ -137,6 +137,8 @@ class PanelVList(_PanelList):
 
 
     def _draw(self, height, width):
+        if not self.children:
+            return
         c = self.children[0]
         uparrow = not c.win or c.win.getmaxyx()[0] < c.min_height
         c = self.children[-1]
