@@ -2,6 +2,7 @@ import curses
 import curses.ascii
 from panel import Panel
 from colors import color_attr
+from util import shorten_label
 
 
 class Toggle(Panel):
@@ -46,9 +47,7 @@ class Toggle(Panel):
         attr = curses.A_BOLD if self.has_focus else curses.A_NORMAL
 
         if self._draw_label:
-            labelstr = self.label
-            if len(labelstr) > width-1:
-                labelstr = labelstr[:width-2]+'~'
+            labelstr = shorten_label(self.label, width-2)
             self.addstr(0, 0, labelstr, attr)
 
         statestr = 'X' if self.state else '-'

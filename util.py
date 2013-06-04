@@ -54,11 +54,11 @@ def shorten_label(label, length):
     """
     if len(label) > length:
         if label[-1] in '0123456789':
-            maxlen = max(length-1, 0)
+            maxlen = max(length-2, 0)
             label = (label[:maxlen].rstrip()+'~'+
                      label[-1])
         else:
-            maxlen = max(length, 0)
+            maxlen = max(length-1, 0)
             label = label[:maxlen].rstrip()+'~'
     return label
 
