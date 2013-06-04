@@ -4,8 +4,25 @@ import curses.ascii
 from panel import Panel
 from colors import color_attr
 
+
+def _shorten_label(label, length):
+    """
+    Shorten the label depending on whether it ends in a number.
+    """
+    if len(label) > length:
+        if label[-1] in '0123456789':
+            maxlen = max(length-1, 0)
+            label = (label[:maxlen].rstrip()+'~'+
+                     label[-1])
+        else:
+            maxlen = max(length, 0)
+            label = label[:maxlen].rstrip()+'~'
+    return label
+
+
 class AbortEdit(Exception):
     pass
+
 
 class Dial(Panel):
     """A widget to display and manipulate one numeric value."""
@@ -57,15 +74,16 @@ class Dial(Panel):
         attr = curses.A_BOLD if self.has_focus else curses.A_NORMAL
 
         labelstr = self.label
-        if len(labelstr) > width-self.digits:
-            labelstr = labelstr[:width-self.digits-1]+'~'
+        valuestr = str(self.value)
 
+        w = len(valuestr)+3
+        labelstr = _shorten_label(labelstr, width-w)
         c = 0 if self.value != 0 else color_attr("blue")
-        self.addstr(0, 0,
-                    labelstr, attr|c)
-        self.addstr(0, width-self.digits,
-                    str(self.value).rjust(self.digits-1),
-                    attr|color_attr("yellow"))
+        self.addstr(0, 0, labelstr, attr|c)
+
+        if len(valuestr) < width-len(labelstr):
+            self.addstr(0, width-len(valuestr)-1, valuestr,
+                        attr|color_attr("yellow"))
 
     def _get_status_draw_task(self):
         def status_draw_task(statusbar):
