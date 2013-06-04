@@ -39,12 +39,12 @@ class Panel:
 
     #--------------------------------------------------------------------
 
-    def log(self, text):
+    def log(self, *text):
         """
         Write text to log file (must be provided in advance).
         """
         try:
-            print >> self._log, str(self), text
+            print >> self._log, str(self), " ".join(map(str, text))
             self._log.flush()
         except:
             pass
