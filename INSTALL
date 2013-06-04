@@ -1,0 +1,9 @@
+installing system-wide:
+
+  $ python setup.py install
+
+
+installing in single user's home directory:
+
+  $ python setup.py install --user
+
