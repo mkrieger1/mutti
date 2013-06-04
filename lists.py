@@ -46,7 +46,6 @@ class PanelVList(_PanelList):
     _next_keys = [curses.ascii.TAB, curses.KEY_DOWN, ord('j'), ord('w')]
     _prev_keys = [curses.KEY_BTAB,  curses.KEY_UP,   ord('k'), ord('b')]
 
-
     def _get_size(self):
         if not self.children:
             return
@@ -55,7 +54,6 @@ class PanelVList(_PanelList):
         max_height = sum(c.max_height for c in self.children)
         max_width = max(c.max_width for c in self.children)
         return (min_height, min_width, max_height, max_width)
-
 
     def _layout(self, height, width):
         if not self.children:
@@ -83,7 +81,6 @@ class PanelVList(_PanelList):
             else:
                 c.take_window()
 
-
     def _draw(self, height, width):
         if not self.children:
             return
@@ -107,7 +104,6 @@ class PanelHList(_PanelList):
     _next_keys = [curses.ascii.TAB, curses.KEY_RIGHT, ord('l'), ord('w')]
     _prev_keys = [curses.KEY_BTAB,  curses.KEY_LEFT,  ord('h'), ord('b')]
 
-
     def _get_size(self):
         if not self.children:
             return
@@ -117,7 +113,6 @@ class PanelHList(_PanelList):
         max_width = sum(c.max_width for c in self.children)
         return (min_height, min_width, max_height, max_width)
 
-
     def _layout(self, height, width):
         if not self.children:
             return
@@ -125,8 +120,13 @@ class PanelHList(_PanelList):
         want = [c.max_width-c.min_width for c in self.children]
         distribute_space(width, self.focus_idx, give, want)
 
+        arrows = [give[i] < self.children[i].min_width
+                  for i in [0, -1]]
+        if any(arrows):
+            distribute_space(width-sum(arrows), self.focus_idx, give)
+        left = 1 if arrows[0] else 0
+
         h = max(c.min_height for c in self.children)
-        left = 0
         for (c, w) in zip(self.children, give):
             if w > 0:
                 c.give_window(left=left, height=h, width=w,
@@ -134,4 +134,17 @@ class PanelHList(_PanelList):
                 left += w
             else:
                 c.take_window()
+
+    def _draw(self, height, width):
+        if not self.children:
+            return
+        c = self.children[0]
+        larrow = not c.win or c.win.getmaxyx()[1] < c.min_width
+        c = self.children[-1]
+        rarrow = not c.win or c.win.getmaxyx()[1] < c.min_width
+
+        if larrow:
+            self.addch(0, 0, curses.ACS_LARROW)
+        if rarrow:
+            self.addch(0, width-1, curses.ACS_RARROW)
 
