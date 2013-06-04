@@ -1,7 +1,7 @@
 import curses
 import curses.ascii
 from panel import Panel
-from util import distribute_space
+from util import distribute_space, shorten_label
 from colors import color_attr
 
 
@@ -101,7 +101,7 @@ class Tabs(Panel):
                 else:
                     attr = curses.A_NORMAL
                 if L < b:
-                    labelstr = label[:L].rstrip()+'~'
+                    labelstr = shorten_label(label, L)
                 else:
                     labelstr = label
                     self.addch(0, left+w-1, curses.ACS_VLINE)
