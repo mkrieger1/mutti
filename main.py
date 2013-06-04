@@ -10,6 +10,7 @@ from align import VAlign, HAlign
 from toggle import Toggle
 from grid import Grid
 from tabs import Tabs
+from label import Label
 
 #--------------------------------------------------------------------
 
@@ -78,7 +79,53 @@ def build_panels(stdscr):
     tabs.adopt(vlist, "first VList")
     tabs.adopt(vlist2, "second VList")
     tabs.adopt(g, "Grid")
-    for i in range(6):
+
+    nbm = Grid(22, 23)
+    nbm._log = f
+    for row in range(3, 3+16):
+        for col in range(1+3, 1+3+16):
+            if not row == col-1:
+                t = Toggle("Ch. %i triggers Ch. %i" % (col-3-1, row-3),
+                           draw_label=False)
+                t._status = statusbar
+                nbm.adopt(t, row, col, update_size=False)
+    for row in range(3):
+        for col in range(1+3, 1+3+16):
+            t = Toggle("Ch. %i triggers Upper %i" % (col-3-1, row),
+                       draw_label=False)
+            t._status = statusbar
+            nbm.adopt(t, row, col, update_size=False)
+    for row in range(16+3, 16+3+3):
+        for col in range(1+3, 1+3+16):
+            t = Toggle("Ch. %i triggers Lower %i" % (col-3-1, row-16-3),
+                       draw_label=False)
+            t._status = statusbar
+            nbm.adopt(t, row, col, update_size=False)
+    for row in range(3, 3+16):
+        for col in range(1, 1+3):
+            t = Toggle("Lower %i triggers Ch. %i" % (col-1, row-3),
+                       draw_label=False)
+            t._status = statusbar
+            nbm.adopt(t, row, col, update_size=False)
+    for row in range(3, 3+16):
+        for col in range(1+16+3, 1+16+3+3):
+            t = Toggle("Upper %i triggers Ch. %i" % (col-16-3-1, row-3),
+                       draw_label=False)
+            t._status = statusbar
+            nbm.adopt(t, row, col, update_size=False)
+    for row in range(3):
+        l = Label("Upper %i " % row)
+        nbm.adopt(l, row, 0, align_hor="right", update_size=False)
+    for row in range(3, 3+16):
+        l = Label("Channel %2i " % (row-3))
+        nbm.adopt(l, row, 0, align_hor="right", update_size=False)
+    for row in range(3+16, 3+16+3):
+        l = Label("Lower %i " % (row-3-16))
+        nbm.adopt(l, row, 0, align_hor="right", update_size=False)
+    nbm.update_size()
+    tabs.adopt(nbm, "Neighbor Matrix")
+
+    for i in range(5):
         tabs.adopt(VList(),  "dummy list %i" % i)
     tabs._log = f
 
