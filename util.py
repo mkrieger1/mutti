@@ -46,3 +46,19 @@ def distribute_space(available, focus_idx, give, want=None):
                 want[i] -= 1
                 give[i] += 1
             i = (i+1)%len(give)
+
+
+def shorten_label(label, length):
+    """
+    Shorten the label depending on whether it ends in a number.
+    """
+    if len(label) > length:
+        if label[-1] in '0123456789':
+            maxlen = max(length-1, 0)
+            label = (label[:maxlen].rstrip()+'~'+
+                     label[-1])
+        else:
+            maxlen = max(length, 0)
+            label = label[:maxlen].rstrip()+'~'
+    return label
+

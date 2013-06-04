@@ -3,21 +3,7 @@ import curses.textpad
 import curses.ascii
 from panel import Panel
 from colors import color_attr
-
-
-def _shorten_label(label, length):
-    """
-    Shorten the label depending on whether it ends in a number.
-    """
-    if len(label) > length:
-        if label[-1] in '0123456789':
-            maxlen = max(length-1, 0)
-            label = (label[:maxlen].rstrip()+'~'+
-                     label[-1])
-        else:
-            maxlen = max(length, 0)
-            label = label[:maxlen].rstrip()+'~'
-    return label
+from util import shorten_label
 
 
 class AbortEdit(Exception):
@@ -77,7 +63,7 @@ class Dial(Panel):
         valuestr = str(self.value)
 
         w = len(valuestr)+3
-        labelstr = _shorten_label(labelstr, width-w)
+        labelstr = shorten_label(labelstr, width-w)
         c = 0 if self.value != 0 else color_attr("blue")
         self.addstr(0, 0, labelstr, attr|c)
 
