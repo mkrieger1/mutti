@@ -9,8 +9,10 @@ setup(name='mutti',
       author='Michael Krieger',
       author_email='michael.krieger@ziti.uni-heidelberg.de',
       packages=['mutti'],
-      package_data={'mutti': ['templates/panel_template.py',
-                              'examples/example.py']},
+      package_data={'mutti': ['templates/*.py',
+                              'examples/*.py',
+                              'curses-tests/*.py',
+                             ]},
       )
 
 
