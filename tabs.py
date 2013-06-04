@@ -1,7 +1,7 @@
 import curses
 import curses.ascii
 from panel import Panel
-from lists import _layout_distr
+from util import distribute_space
 from colors import color_attr
 
 
@@ -80,7 +80,7 @@ class Tabs(Panel):
          self._last_distr[1][fi] != len(self._labels[fi])+3):
             # for each label: " label |"
             give = [len(label)+3 for label in self._labels]
-            _layout_distr(fi, width, give)
+            distribute_space(width, fi, give)
             self._last_distr = (width, give)
         else:
             give = self._last_distr[1]

@@ -1,7 +1,7 @@
 import curses
 import curses.ascii
 from panel import Panel, PanelError
-from lists import _layout_distr
+from util import distribute_space
 
 
 class Grid(Panel):
@@ -113,8 +113,8 @@ class Grid(Panel):
                     for col in range(self._columns)]
         idx_row, idx_col = self._pos[self.focused_child]
 
-        _layout_distr(idx_row, height, give_row, want_row)
-        _layout_distr(idx_col, width,  give_col, want_col)
+        distribute_space(height, idx_row, give_row, want_row)
+        distribute_space(width,  idx_col, give_col, want_col)
 
         top = 0
         for row in range(self._rows):
