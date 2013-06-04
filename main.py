@@ -4,7 +4,7 @@ import time
 
 from screen import Screen, QuitScreen
 from dial import Dial
-from lists import PanelVList, PanelHList
+from lists import VList, HList
 from status import Status
 from align import VAlign, HAlign
 from toggle import Toggle
@@ -23,7 +23,7 @@ def build_panels(stdscr):
 
     tabs = Tabs()
 
-    vlist = PanelVList()
+    vlist = VList()
     #vlist._log = f
     for i in range(5):
         d = Dial("Dial %02i"%i, (-100, 100), 6, 2*i)
@@ -31,7 +31,7 @@ def build_panels(stdscr):
         #d._log = f
         vlist.adopt(d)
 
-    hlist = PanelHList()
+    hlist = HList()
     #hlist._log = f
     for i in range(3):
         d = Dial("Dial %02i"%i, (-100, 100), 6, 2*i)
@@ -43,7 +43,7 @@ def build_panels(stdscr):
     hlist_align.adopt(hlist)
     vlist.adopt(hlist_align)
 
-    vlist2 = PanelVList()
+    vlist2 = VList()
     #vlist2._log = f
     for i in range(10):
         t = Toggle("Toggle %02i"%i)
@@ -79,7 +79,7 @@ def build_panels(stdscr):
     tabs.adopt(vlist2, "second VList")
     tabs.adopt(g, "Grid")
     for i in range(6):
-        tabs.adopt(PanelVList(),  "dummy list %i" % i)
+        tabs.adopt(VList(),  "dummy list %i" % i)
     tabs._log = f
 
     mainscreen.adopt(tabs)

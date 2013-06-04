@@ -39,7 +39,7 @@ class _PanelList(Panel):
 
 #--------------------------------------------------------------------
 
-class PanelVList(_PanelList):
+class VList(_PanelList):
     """
     Vertical panel list.
     """
@@ -97,7 +97,7 @@ class PanelVList(_PanelList):
             self.addch(height-1, xdn, curses.ACS_DARROW)
 
 
-class PanelHList(_PanelList):
+class HList(_PanelList):
     """
     Horizontal panel list.
     """
