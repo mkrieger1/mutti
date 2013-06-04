@@ -37,6 +37,8 @@ def build_panels(stdscr):
         d = Dial("Dial %02i"%i, (-100, 100), 6, 2*i)
         d._status = statusbar
         hlist.adopt(d)
+    d = Dial("Another Dial", (-100, 100), 6, 10)
+    hlist.adopt(d)
     hlist_align = VAlign(align='center', height=20)
     hlist_align.adopt(hlist)
     vlist.adopt(hlist_align)
