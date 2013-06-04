@@ -17,10 +17,11 @@ class Grid(Panel):
         self._pos = {}
 
 
-    def adopt(self, panel, row, col, align_hor='left', align_ver='top'):
+    def adopt(self, panel, row, col, align_hor='left', align_ver='top',
+                    update_size=True):
         pos = (row, col)
         self._pos[panel] = pos
-        Panel.adopt(self, panel)
+        Panel.adopt(self, panel, update_size)
         self._align_hor[pos] = align_hor
         self._align_ver[pos] = align_ver
         self.children.sort(key=lambda c: self._pos[c])

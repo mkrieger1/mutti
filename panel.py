@@ -51,14 +51,18 @@ class Panel:
 
     #--------------------------------------------------------------------
 
-    def adopt(self, child):
+    def adopt(self, child, update_size=True):
         """
         Declare another panel as child.
         """
         if len(self.children) >= self._max_children:
             raise PanelError('additional children are not allowed')
         self.children.append(child)
-        self.update_size()
+        # If there are many children, update_size can be skipped to save
+        # time. It must then be called explicitly after all children are
+        # adopted.
+        if update_size:
+            self.update_size()
         child.parent = self
         if not self.focused_child:
             if child._focusable:
