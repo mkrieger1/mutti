@@ -1,6 +1,6 @@
 import curses
 import curses.ascii
-from panel import Panel, PanelError
+from panel import Panel
 from util import distribute_space
 
 
@@ -115,6 +115,7 @@ class Grid(Panel):
 
         distribute_space(height, idx_row, give_row, want_row)
         distribute_space(width,  idx_col, give_col, want_col)
+        # TODO scrolling arrows
 
         top = 0
         for row in range(self._rows):
