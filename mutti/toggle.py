@@ -52,8 +52,9 @@ class Toggle(Panel):
             self.addstr(0, 0, labelstr, attr|c)
 
         statestr = 'X' if self.state else '-'
-        c = curses.A_REVERSE if self._changed() else 0
-        self.addstr(0, width-1, statestr, attr|color_attr("yellow")|c)
+        c = (color_attr("blue") if self._changed()
+             else color_attr("yellow"))
+        self.addstr(0, width-1, statestr, attr|c)
 
 
     def _get_status_draw_task(self):

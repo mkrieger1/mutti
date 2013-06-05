@@ -64,9 +64,10 @@ class Dial(Panel):
         self.addstr(0, 0, labelstr, attr|c)
 
         if len(valuestr) < width-len(labelstr):
-            c = curses.A_REVERSE if self._changed() else 0
+            c = (color_attr("blue") if self._changed()
+                 else color_attr("yellow"))
             self.addstr(0, width-len(valuestr)-1, valuestr,
-                        attr|color_attr("yellow")|c)
+                        attr|c)
 
     def _get_status_draw_task(self):
         def status_draw_task(statusbar):
