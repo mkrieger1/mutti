@@ -9,9 +9,11 @@ class Status(Panel):
 
     def __init__(self, width=None):
         Panel.__init__(self, min_height=1, max_height=1, min_width=width)
+        self._draw_task = None
 
     def _erase(self, height, width):
-        pass
+        if not self._draw_task:
+            self.win.erase()
 
     def _draw(self, height, width):
         self.win.bkgd(' ', curses.A_REVERSE)
