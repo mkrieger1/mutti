@@ -1,18 +1,8 @@
-import curses
+from mutti import Screen, Tabs, VList, HList, VAlign, Grid, Dial, Toggle
 
-from mutti.screen import Screen, QuitScreen
-from mutti.status import Status
-from mutti.tabs import Tabs
-from mutti.lists import VList, HList
-from mutti.align import VAlign
-from mutti.grid import Grid
-from mutti.dial import Dial
-from mutti.toggle import Toggle
 
-#--------------------------------------------------------------------
-
-def build_panels(stdscr):
-    mainscreen = Screen(stdscr)
+def build_panels():
+    mainscreen = Screen()
     # The status bar, which various panels will draw on, belongs to the
     # main screen, so that it is in the foreground.
     statusbar = mainscreen.statusbar
@@ -76,29 +66,10 @@ def build_panels(stdscr):
 
 #--------------------------------------------------------------------
 
-def main_loop(top_panel):
-    """
-    Run the application.
-
-    top_panel must be a Panel instance with top_panel.win == stdscr.
-    """
-    while 1:
-        top_panel.redraw()
-        curses.doupdate()
-        key = top_panel.win.getch()
-        try:
-            top_panel.handle_key(key)
-        except QuitScreen:
-            break
-
-def main(stdscr):
-    curses.use_default_colors()
-    top_panel = build_panels(stdscr)
-    main_loop(top_panel)
-
 if __name__=='__main__':
     try:
-        curses.wrapper(main)
+        top_panel = build_panels()
+        top_panel.run()
     except KeyboardInterrupt:
         pass
 
