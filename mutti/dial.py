@@ -30,7 +30,7 @@ class Dial(Panel):
                 value = 0
             else:
                 value = self.vmin
-        self.set(value)
+        self.set_value(value)
 
         self.label = label
 
@@ -84,7 +84,7 @@ class Dial(Panel):
 
     #--------------------------------------------------------------------
 
-    def set(self, value):
+    def set_value(self, value):
         if value > self.vmax:
             self.value = self.vmax
         elif value < self.vmin:
@@ -93,10 +93,10 @@ class Dial(Panel):
             self.value = value
 
     def inc(self, amount):
-        self.set(self.value+amount)
+        self.set_value(self.value+amount)
 
     def dec(self, amount):
-        self.set(self.value-amount)
+        self.set_value(self.value-amount)
 
     def _validator(self, key, *args):
         if key == ord('q'):
@@ -118,7 +118,7 @@ class Dial(Panel):
         finally:
             curses.curs_set(0)
         try:
-            self.set(int(b.gather(), 0))
+            self.set_value(int(b.gather(), 0))
             return True
         except ValueError:
             return False

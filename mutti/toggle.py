@@ -21,20 +21,20 @@ class Toggle(Panel):
         max_width = max_width or min_width
         Panel.__init__(self, min_height=1, min_width=min_width,
                              max_height=1, max_width=max_width)
-        self.state = False
+        self.set_state(False)
         self.label = label
         self._draw_label = draw_label
 
 
     def _handle_key(self, key):
         if key == ord('y'):
-            self.state = True
+            self.set_state(True)
             return curses.ascii.TAB # focus next
         elif key == ord('n'):
-            self.state = False
+            self.set_state(False)
             return curses.ascii.TAB
         elif key == curses.ascii.SP:
-            self.state = not self.state
+            self.set_state(not self.state)
         else:
             return key
 
@@ -76,4 +76,9 @@ class Toggle(Panel):
         Indicate whether the state differs from the last known state.
         """
         return False # overwrite me!
+
+    #--------------------------------------------------------------------
+
+    def set_state(self, state):
+        self.state = bool(state)
 
