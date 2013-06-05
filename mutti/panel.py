@@ -5,6 +5,9 @@ INF = float('inf')
 class PanelError(Exception):
     pass
 
+class ExitLoop(Exception):
+    pass
+
 
 class Panel:
     _focusable = True
@@ -36,6 +39,26 @@ class Panel:
         self.focused_child = None
 
         self.has_focus = False
+
+    #--------------------------------------------------------------------
+
+    def run(self):
+        """
+        Run the application with this panel as top panel.
+        """
+        def main(stdscr):
+            curses.use_default_colors()
+            curses.curs_set(0)
+            self.win = stdscr
+            while 1:
+                self.redraw()
+                curses.doupdate()
+                key = self.win.getch()
+                try:
+                    self.handle_key(key)
+                except ExitLoop:
+                    break
+        curses.wrapper(main)
 
     #--------------------------------------------------------------------
 

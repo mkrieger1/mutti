@@ -3,7 +3,7 @@ from dial   import Dial
 from grid   import Grid
 from label  import Label
 from lists  import HList, VList
-from screen import Screen, QuitScreen
+from screen import Screen
 from space  import HSpace, VSpace
 from tabs   import Tabs
 from toggle import Toggle

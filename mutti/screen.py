@@ -1,10 +1,6 @@
-import curses
-from panel import Panel
+from panel import Panel, ExitLoop
 from status import Status
 from colors import color_attr
-
-class QuitScreen(Exception):
-    pass
 
 class Screen(Panel):
     _max_children = 2 # one of them is the statusbar
@@ -42,7 +38,7 @@ class Screen(Panel):
 
     def _handle_key(self, key):
         if key in map(ord, 'qQ'):
-            raise QuitScreen
+            raise ExitLoop
         else:
             return key
 
