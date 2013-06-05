@@ -48,21 +48,31 @@ class Toggle(Panel):
 
         if self._draw_label:
             labelstr = shorten_label(self.label, width-2)
-            self.addstr(0, 0, labelstr, attr)
+            c = color_attr("blue") if self._changed() else 0
+            self.addstr(0, 0, labelstr, attr|c)
 
         statestr = 'X' if self.state else '-'
-        self.addstr(0, width-1, statestr, attr|color_attr("yellow"))
+        c = curses.A_REVERSE if self._changed() else 0
+        self.addstr(0, width-1, statestr, attr|color_attr("yellow")|c)
 
 
     def _get_status_draw_task(self):
         def status_draw_task(statusbar):
             _, width = statusbar.win.getmaxyx()
             statusbar.win.erase()
-            statustext = "%s: %s" % (self.label,
-                                     "ON" if self.state else "OFF")
+            statustext = "%s: %s" % (
+                self.label + ("*" if self._changed() else ""),
+                "ON" if self.state else "OFF")
             statusbar.addstr(0, 0, statustext, curses.A_BOLD)
             helptext = "Space to toggle, Y/N to set"
             if len(statustext) + len(helptext) < width:
                 statusbar.addstr(0, width-len(helptext), helptext)
         return status_draw_task
+
+
+    def _changed(self):
+        """
+        Indicate whether the state differs from the last known state.
+        """
+        return False # overwrite me!
 

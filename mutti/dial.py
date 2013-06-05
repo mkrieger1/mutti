@@ -60,18 +60,21 @@ class Dial(Panel):
 
         w = len(valuestr)+2
         labelstr = shorten_label(labelstr, width-w)
-        c = 0 if self.value != 0 else color_attr("blue")
+        c = color_attr("blue") if self._changed() else 0
         self.addstr(0, 0, labelstr, attr|c)
 
         if len(valuestr) < width-len(labelstr):
+            c = curses.A_REVERSE if self._changed() else 0
             self.addstr(0, width-len(valuestr)-1, valuestr,
-                        attr|color_attr("yellow"))
+                        attr|color_attr("yellow")|c)
 
     def _get_status_draw_task(self):
         def status_draw_task(statusbar):
             _, width = statusbar.win.getmaxyx()
             statusbar.win.erase()
-            statustext = "%s: %i" % (self.label, self.value)
+            statustext = "%s: %i" % (
+                self.label + ("*" if self._changed() else ""),
+                self.value)
             statusbar.addstr(0, 0, statustext, curses.A_BOLD)
             helptext = "+/-/^A/^X, PgUp/PgDn/^U/^D to change, S to type"
             if len(statustext) + len(helptext) < width:
@@ -118,4 +121,10 @@ class Dial(Panel):
             return True
         except ValueError:
             return False
+
+    def _changed(self):
+        """
+        Indicate whether the value differs from the last known state.
+        """
+        return False # overwrite me!
 
