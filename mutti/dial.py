@@ -34,10 +34,6 @@ class Dial(Panel):
 
         self.label = label
 
-
-    #--------------------------------------------------------------------
-    # Panel method overrides
-    #--------------------------------------------------------------------
     def _handle_key(self, key):
         if key in [ord('+'), ord('a')-96]: # -96 = CTRL
             self.inc(1)
@@ -82,22 +78,8 @@ class Dial(Panel):
                 statusbar.addstr(0, width-len(helptext), helptext)
         return status_draw_task
 
-    #def set_status(self):
-    #    bar_len = 20
-    #    bar_pos = ((self.value - self.vmin) * bar_len / 
-    #               (self.vmax  - self.vmin))
-    #    bar = '#'*bar_pos + '-'*(bar_len-bar_pos)
-    #    left = ' '.join([self.label,
-    #                     str(self.value).rjust(self.digits),
-    #                     bar])
-    #    right = '+/-, PageUp/PageDn to change, S to type'
-    #    padding = ' '*(statuspanel.win.getmaxyx()[1]-len(left)-len(right))
-    #    self.statuspanel.set(left + padding + right)
-
-
     #--------------------------------------------------------------------
-    # custom methods
-    #--------------------------------------------------------------------
+
     def set(self, value):
         if value > self.vmax:
             self.value = self.vmax
