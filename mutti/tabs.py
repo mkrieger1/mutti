@@ -47,8 +47,8 @@ class Tabs(Panel):
     def _get_size(self):
         min_height = max(c.min_height for c in self.children) + 2
         min_width  = max(c.min_width  for c in self.children)
-        max_height = max(c.max_height for c in self.children) + 2
-        max_width  = max(c.max_width  for c in self.children)
+        max_height = None
+        max_width  = None
         return (min_height, min_width, max_height, max_width)
 
 

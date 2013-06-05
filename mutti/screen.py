@@ -21,7 +21,7 @@ class Screen(Panel):
 
     def _layout(self, height, width):
         c = self.children[1]
-        w = self.min_width
+        w = max(ch.min_width for ch in self.children)
         h = min(c.min_height, height-1)
         top = max((height-h)/2, 0)
         left = max((width-w)/2, 0)
