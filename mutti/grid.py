@@ -15,12 +15,14 @@ class Grid(Panel):
         self._align_hor = {}
         self._align_ver = {}
         self._pos = {}
+        self._panel = {}
 
 
     def adopt(self, panel, row, col, align_hor='left', align_ver='top',
                     update_size=True):
         pos = (row, col)
         self._pos[panel] = pos
+        self._panel[pos] = panel
         Panel.adopt(self, panel, update_size)
         self._align_hor[pos] = align_hor
         self._align_ver[pos] = align_ver
@@ -124,10 +126,8 @@ class Grid(Panel):
             left = 0
             for col in range(self._columns):
                 w = give_col[col]
-                _c = [c for c in self.children
-                      if self._pos[c] == (row, col)]
-                if _c:
-                    c = _c[0]
+                if (row, col) in self._panel:
+                    c = self._panel[(row, col)]
                     if h > 0 and w > 0:
                         c.give_window(h, w, top, left)
                     else:
