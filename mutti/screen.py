@@ -5,9 +5,8 @@ from colors import color_attr
 class Screen(Panel):
     _max_children = 2 # one of them is the statusbar
 
-    def __init__(self, stdscr):
-        Panel.__init__(self, win=stdscr)
-        curses.curs_set(0)
+    def __init__(self):
+        Panel.__init__(self)
         self.set_focus(True)
         statusbar = Status()
         self.adopt(statusbar)
