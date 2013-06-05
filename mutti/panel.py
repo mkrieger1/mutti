@@ -45,6 +45,12 @@ class Panel:
         """
         Run the application with this panel as top panel.
         """
+        # workaround for strange behaviour in interactive mode
+        # see http://bugs.python.org/issue2675
+        if not __name__=='__main__':
+            import os
+            for v in ['LINES', 'COLUMNS']:
+                os.unsetenv(v)
         def main(stdscr):
             curses.use_default_colors()
             curses.curs_set(0)
