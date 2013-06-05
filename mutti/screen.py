@@ -8,7 +8,7 @@ class Screen(Panel):
     def __init__(self):
         Panel.__init__(self)
         self.set_focus(True)
-        statusbar = Status()
+        statusbar = Status(width=80)
         self.adopt(statusbar)
         self.statusbar = statusbar
 
@@ -21,7 +21,7 @@ class Screen(Panel):
 
     def _layout(self, height, width):
         c = self.children[1]
-        w = c.min_width
+        w = self.min_width
         h = min(c.min_height, height-1)
         top = max((height-h)/2, 0)
         left = max((width-w)/2, 0)
