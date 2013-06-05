@@ -14,7 +14,7 @@ class Panel:
     _max_children = INF
 
     def __init__(self, min_height=None, min_width=None,
-                       max_height=None, max_width=None, win=None):
+                       max_height=None, max_width=None):
         """
         Specify minimum/maximum size and optionally set the window.
 
@@ -31,8 +31,7 @@ class Panel:
         self.max_height = max_height or INF
         self.max_width  = max_width  or INF
 
-        self.win = win
-
+        self.win = None
         self.parent = None
         self.children = []
         self.focus_idx = 0
