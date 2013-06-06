@@ -15,6 +15,7 @@ class Label(Panel):
         Panel.__init__(self, min_width=w, max_width=w,
                              min_height=1, max_height=1)
         self.text = text
+        self.attr_ovr = 0
 
     def _handle_key(self, key):
         return key
@@ -24,5 +25,5 @@ class Label(Panel):
             
     def _draw(self, height, width):
         text = shorten_label(self.text, width)
-        self.addstr(0, 0, text)
+        self.addstr(0, 0, text, attr=self.attr_ovr)
 
