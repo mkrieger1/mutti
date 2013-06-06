@@ -46,14 +46,14 @@ class Toggle(Panel):
     def _draw(self, height, width):
         attr = curses.A_BOLD if self.has_focus else curses.A_NORMAL
 
+        changed = self._changed()
         if self._draw_label:
             labelstr = shorten_label(self.label, width-2)
-            c = color_attr("blue") if self._changed() else 0
+            c = color_attr("blue") if changed else 0
             self.addstr(0, 0, labelstr, attr|c)
 
         statestr = 'X' if self.state else '-'
-        c = (color_attr("blue") if self._changed()
-             else color_attr("yellow"))
+        c = (color_attr("blue") if changed else color_attr("yellow"))
         self.addstr(0, width-1, statestr, attr|c)
 
 

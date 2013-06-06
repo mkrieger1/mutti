@@ -60,12 +60,12 @@ class Dial(Panel):
 
         w = len(valuestr)+2
         labelstr = shorten_label(labelstr, width-w)
-        c = color_attr("blue") if self._changed() else 0
+        changed = self._changed()
+        c = color_attr("blue") if changed else 0
         self.addstr(0, 0, labelstr, attr|c)
 
         if len(valuestr) < width-len(labelstr):
-            c = (color_attr("blue") if self._changed()
-                 else color_attr("yellow"))
+            c = (color_attr("blue") if changed else color_attr("yellow"))
             self.addstr(0, width-len(valuestr)-1, valuestr,
                         attr|c)
 
