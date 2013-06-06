@@ -62,7 +62,7 @@ class Toggle(Panel):
             _, width = statusbar.win.getmaxyx()
             statusbar.win.erase()
             statustext = "%s: %s" % (
-                self.label + ("*" if self._changed() else ""),
+                self.label.strip() + ("*" if self._changed() else ""),
                 "ON" if self.state else "OFF")
             statusbar.addstr(0, 0, statustext, curses.A_BOLD)
             helptext = "Space to toggle, Y/N to set"

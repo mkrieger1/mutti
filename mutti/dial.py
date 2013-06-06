@@ -74,7 +74,7 @@ class Dial(Panel):
             _, width = statusbar.win.getmaxyx()
             statusbar.win.erase()
             statustext = "%s: %i" % (
-                self.label + ("*" if self._changed() else ""),
+                self.label.strip() + ("*" if self._changed() else ""),
                 self.value)
             statusbar.addstr(0, 0, statustext, curses.A_BOLD)
             helptext = "+/-/^A/^X, PgUp/PgDn/^U/^D to change, S to type"
