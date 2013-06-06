@@ -11,16 +11,16 @@ def build_panels():
     # horizontal list with more dials
     vlist = VList()
     for i in range(5):
-        d = Dial("Dial %02i"%i, (-100, 100), 6, 2*i)
+        d = Dial((-100, 100), 6, "Dial %02i"%i, value=2*i)
         d._status = statusbar
         vlist.adopt(d)
 
     hlist = HList()
     for i in range(3):
-        d = Dial("Dial %02i"%i, (-100, 100), 6, 2*i)
+        d = Dial((-100, 100), 6, "Dial %02i"%i, value=2*i)
         d._status = statusbar
         hlist.adopt(d)
-    d = Dial("Another Dial", (-100, 100), 6, 10)
+    d = Dial((-100, 100), 6, "Another Dial", value=10)
     hlist.adopt(d)
     hlist_align = VAlign(align='center', height=20)
     hlist_align.adopt(hlist)
@@ -51,7 +51,7 @@ def build_panels():
                 t._status = statusbar
                 g.adopt(t, row, col)
             else:
-                d = Dial("Dial%i%i" % (row, col), (-32, 32), 3)
+                d = Dial((-32, 32), 3, "Dial%i%i" % (row, col))
                 d._status = statusbar
                 g.adopt(d, row, col)
 

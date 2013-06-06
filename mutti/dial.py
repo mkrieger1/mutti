@@ -15,7 +15,7 @@ class Dial(Panel):
 
     _max_children = 0
 
-    def __init__(self, label, vrange, digits,
+    def __init__(self, vrange, digits, label="", draw_label=True,
                        value=None, min_width=None, max_width=None):
         self.vmin, self.vmax = vrange
         self.digits = digits+1
@@ -33,6 +33,7 @@ class Dial(Panel):
         self.set_value(value)
 
         self.label = label
+        self._draw_label = draw_label
 
     def _handle_key(self, key):
         if key in [ord('+'), ord('a')-96]: # -96 = CTRL
@@ -58,11 +59,14 @@ class Dial(Panel):
         labelstr = self.label
         valuestr = str(self.value)
 
-        w = len(valuestr)+2
-        labelstr = shorten_label(labelstr, width-w)
         changed = self._changed()
-        c = color_attr("blue") if changed else 0
-        self.addstr(0, 0, labelstr, attr|c)
+        w = len(valuestr)+2
+        if self._draw_label:
+            labelstr = shorten_label(labelstr, width-w)
+            c = color_attr("blue") if changed else 0
+            self.addstr(0, 0, labelstr, attr|c)
+        else:
+            labelstr = ""
 
         if len(valuestr) < width-len(labelstr):
             c = (color_attr("blue") if changed else color_attr("yellow"))
