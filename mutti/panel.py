@@ -203,8 +203,9 @@ class Panel:
         else:
             if self.focused_child:
                 key = self.focused_child.handle_key(key)
-            if key is not None:
+            if 1:#key is not None:
                 return self._handle_key(key)
+                # TODO test if this is a problem anywhere
 
     def _handle_key(self, key):
         """
