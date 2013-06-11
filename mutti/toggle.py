@@ -38,6 +38,14 @@ class Toggle(Panel):
         else:
             return key
 
+    def _displaytext(self):
+        return 'X' if self.state else '-'
+
+    def _statustext(self):
+        return 'ON' if self.state else 'OFF'
+
+    def _helptext(self):
+        return "Space to toggle, Y/N to set"
 
     def _erase(self, height, width):
         self.win.erase()
@@ -52,7 +60,7 @@ class Toggle(Panel):
             c = color_attr("blue") if changed else 0
             self.addstr(0, 0, labelstr, attr|c)
 
-        statestr = 'X' if self.state else '-'
+        statestr = self._displaytext()
         c = (color_attr("blue") if changed else color_attr("yellow"))
         self.addstr(0, width-1, statestr, attr|c)
 
@@ -63,9 +71,9 @@ class Toggle(Panel):
             statusbar.win.erase()
             statustext = "%s: %s" % (
                 self.label.strip() + ("*" if self._changed() else ""),
-                "ON" if self.state else "OFF")
+                self._statustext())
             statusbar.addstr(0, 0, statustext, curses.A_BOLD)
-            helptext = "Space to toggle, Y/N to set"
+            helptext = self._helptext()
             if len(statustext) + len(helptext) < width:
                 statusbar.addstr(0, width-len(helptext), helptext)
         return status_draw_task
