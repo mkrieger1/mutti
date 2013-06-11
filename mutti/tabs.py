@@ -29,9 +29,9 @@ class Tabs(Panel):
         if key in map(ord, '123456789'):
             i = int(chr(key))-1
         elif key in map(ord, 'tW'):
-            i = self.focus_idx + 1
+            i = (self.focus_idx + 1) % len(self.children)
         elif key in map(ord, 'TB'):
-            i = self.focus_idx - 1
+            i = (self.focus_idx - 1) % len(self.children)
         else:
             return key
         if i in range(len(self.children)):
