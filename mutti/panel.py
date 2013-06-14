@@ -211,7 +211,7 @@ class Panel:
         """
         Do something depending on the key, or return the key.
 
-        The key is not None.
+        The key is not None. WRONG (see above)
         """
         if self._focusable:
             raise NotImplementedError # needed if has focus
