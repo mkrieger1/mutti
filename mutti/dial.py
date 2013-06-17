@@ -50,6 +50,18 @@ class Dial(Panel):
         else:
             return key
 
+    def _displaytext(self):
+        return str(self.value)
+
+    def _statustext(self):
+        return str(self.value)
+
+    def _statuslabel(self):
+        return self.label
+
+    def _helptext(self):
+        return "+/-/^A/^X, PgUp/PgDn/^U/^D to change, S to type"
+
     def _erase(self, height, width):
         self.win.erase()
 
@@ -57,7 +69,7 @@ class Dial(Panel):
         attr = curses.A_BOLD if self.has_focus else curses.A_NORMAL
 
         labelstr = self.label
-        valuestr = str(self.value)
+        valuestr = self._displaytext()
 
         changed = self._changed()
         w = len(valuestr)+2
@@ -77,11 +89,11 @@ class Dial(Panel):
         def status_draw_task(statusbar):
             _, width = statusbar.win.getmaxyx()
             statusbar.win.erase()
-            statustext = "%s: %i" % (
-                self.label.strip() + ("*" if self._changed() else ""),
-                self.value)
+            statustext = "%s: %s" % (
+                self._statuslabel().strip() + ("*" if self._changed() else ""),
+                self._statustext())
             statusbar.addstr(0, 0, statustext, curses.A_BOLD)
-            helptext = "+/-/^A/^X, PgUp/PgDn/^U/^D to change, S to type"
+            helptext = self._helptext()
             if len(statustext) + len(helptext) < width:
                 statusbar.addstr(0, width-len(helptext), helptext)
         return status_draw_task
@@ -108,6 +120,9 @@ class Dial(Panel):
         else:
             return key
 
+    def _from_text(self, text):
+        return int(text, 0)
+
     def text_input(self):
         _, width = self.win.getmaxyx()
         editwin = self.win.derwin(1, self.digits,
@@ -122,7 +137,7 @@ class Dial(Panel):
         finally:
             curses.curs_set(0)
         try:
-            self.set_value(int(b.gather(), 0))
+            self.set_value(self._from_text(b.gather()))
             return True
         except ValueError:
             return False

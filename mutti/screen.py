@@ -35,8 +35,12 @@ class Screen(Panel):
     def _draw(self, height, width):
         pass
 
+    def _on_exit(self):
+        pass
+
     def _handle_key(self, key):
         if key in map(ord, 'qQ'):
+            self._on_exit()
             raise ExitLoop
         else:
             return key

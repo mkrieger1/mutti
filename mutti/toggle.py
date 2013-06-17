@@ -44,6 +44,9 @@ class Toggle(Panel):
     def _statustext(self):
         return 'ON' if self.state else 'OFF'
 
+    def _statuslabel(self):
+        return self.label
+
     def _helptext(self):
         return "Space to toggle, Y/N to set"
 
@@ -54,15 +57,21 @@ class Toggle(Panel):
     def _draw(self, height, width):
         attr = curses.A_BOLD if self.has_focus else curses.A_NORMAL
 
+        labelstr = self.label
+        statestr = self._displaytext()
+
         changed = self._changed()
+        w = len(statestr)+1
         if self._draw_label:
-            labelstr = shorten_label(self.label, width-2)
+            labelstr = shorten_label(self.label, width-w)
             c = color_attr("blue") if changed else 0
             self.addstr(0, 0, labelstr, attr|c)
+        else:
+            labelstr = ""
 
-        statestr = self._displaytext()
-        c = (color_attr("blue") if changed else color_attr("yellow"))
-        self.addstr(0, width-1, statestr, attr|c)
+        if len(statestr) <= width-len(labelstr):
+            c = (color_attr("blue") if changed else color_attr("yellow"))
+            self.addstr(0, width-len(statestr), statestr, attr|c)
 
 
     def _get_status_draw_task(self):
@@ -70,7 +79,7 @@ class Toggle(Panel):
             _, width = statusbar.win.getmaxyx()
             statusbar.win.erase()
             statustext = "%s: %s" % (
-                self.label.strip() + ("*" if self._changed() else ""),
+                self._statuslabel().strip() + ("*" if self._changed() else ""),
                 self._statustext())
             statusbar.addstr(0, 0, statustext, curses.A_BOLD)
             helptext = self._helptext()
