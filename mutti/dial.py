@@ -72,7 +72,7 @@ class Dial(Panel):
         valuestr = self._displaytext()
 
         changed = self._changed()
-        w = len(valuestr)+2
+        w = len(valuestr)+1
         if self._draw_label:
             labelstr = shorten_label(labelstr, width-w)
             c = color_attr("blue") if changed else 0
@@ -82,7 +82,7 @@ class Dial(Panel):
 
         if len(valuestr) < width-len(labelstr):
             c = (color_attr("blue") if changed else color_attr("yellow"))
-            self.addstr(0, width-len(valuestr)-1, valuestr,
+            self.addstr(0, width-len(valuestr), valuestr,
                         attr|c)
 
     def _get_status_draw_task(self):
