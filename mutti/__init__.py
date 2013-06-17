@@ -20,7 +20,7 @@ del space
 del tabs  
 del toggle
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 __all__ = ['HAlign', 'VAlign', 'Dial', 'Frame', 'Grid', 'Label', 'HList',
            'VList', 'Screen', 'QuitScreen', 'HSpace', 'VSpace', 'Tabs',
