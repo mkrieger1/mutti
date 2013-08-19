@@ -3,12 +3,6 @@ import curses.ascii
 from panel import Panel
 from util import distribute_space
 
-# TODO improve performance
-# it takes a lot of time to
-# a) adopt all the children (because the children are sorted each time)
-# b) redo the layout (_row_min_height etc. is inefficient and called often)
-# --> find a better way to represent the children in 2D than a list
-
 class Grid(Panel):
     """
     Arrange panels in a grid.
@@ -19,8 +13,8 @@ class Grid(Panel):
         self._columns = columns
         self._align_hor = {}
         self._align_ver = {}
-        self._pos = {}
-        self._panel = {}
+        self._pos = {} # mapping of child panel -> (row, col)
+        self._panel = {} # mapping of (row, col) -> child panel
 
 
     def adopt(self, panel, row, col, align_hor='left', align_ver='top',
@@ -31,6 +25,7 @@ class Grid(Panel):
         Panel.adopt(self, panel, update_size)
         self._align_hor[pos] = align_hor
         self._align_ver[pos] = align_ver
+
 
     def update_size(self):
         Panel.update_size(self)
@@ -85,20 +80,25 @@ class Grid(Panel):
     #--------------------------------------------------------------------
 
     def _row_min_height(self, row):
-        return max([0]+[c.min_height for c in self.children
-                        if self._pos[c][0] == row])
-
+        return max([0]+[c.min_height
+                        for c in [self._panel[(row, col)]
+                                  for col in range(self._columns)
+                                  if (row, col) in self._panel]])
     def _row_max_height(self, row):
-        return max([0]+[c.max_height for c in self.children
-                        if self._pos[c][0] == row])
-
+        return max([0]+[c.max_height
+                        for c in [self._panel[(row, col)]
+                                  for col in range(self._columns)
+                                  if (row, col) in self._panel]])
     def _col_min_width(self, col):
-        return max([0]+[c.min_width for c in self.children
-                        if self._pos[c][1] == col])
-
+        return max([0]+[c.min_width
+                        for c in [self._panel[(row, col)]
+                                  for row in range(self._rows)
+                                  if (row, col) in self._panel]])
     def _col_max_width(self, col):
-        return max([0]+[c.max_width for c in self.children
-                        if self._pos[c][1] == col])
+        return max([0]+[c.max_width
+                        for c in [self._panel[(row, col)]
+                                  for row in range(self._rows)
+                                  if (row, col) in self._panel]])
 
 
     def _get_size(self):
