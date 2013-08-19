@@ -31,6 +31,9 @@ class Grid(Panel):
         Panel.adopt(self, panel, update_size)
         self._align_hor[pos] = align_hor
         self._align_ver[pos] = align_ver
+
+    def update_size(self):
+        Panel.update_size(self)
         self.children.sort(key=lambda c: self._pos[c])
 
     #--------------------------------------------------------------------
