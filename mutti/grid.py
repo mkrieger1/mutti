@@ -3,6 +3,11 @@ import curses.ascii
 from panel import Panel
 from util import distribute_space
 
+# TODO improve performance
+# it takes a lot of time to
+# a) adopt all the children (because the children are sorted each time)
+# b) redo the layout (_row_min_height etc. is inefficient and called often)
+# --> find a better way to represent the children in 2D than a list
 
 class Grid(Panel):
     """
