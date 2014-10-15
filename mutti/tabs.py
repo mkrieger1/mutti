@@ -20,8 +20,9 @@ class Tabs(Panel):
         self._last_distr = None
 
     def adopt(self, panel, label):
-        Panel.adopt(self, panel)
+        # adopt calls _get_size, therefore the label must be added first
         self._labels.append("%i: %s" % (len(self._labels)+1, label))
+        Panel.adopt(self, panel)
 
     #--------------------------------------------------------------------
 
@@ -46,7 +47,8 @@ class Tabs(Panel):
 
     def _get_size(self):
         min_height = max(c.min_height for c in self.children) + 2
-        min_width  = max(c.min_width  for c in self.children)
+        min_width  = max([c.min_width  for c in self.children] +
+                         [sum(len(L)+3 for L in self._labels)])
         max_height = None
         max_width  = None
         return (min_height, min_width, max_height, max_width)
