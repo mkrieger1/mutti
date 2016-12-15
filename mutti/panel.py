@@ -157,12 +157,12 @@ class Panel:
         remaining_width  = av_width  - used_width
 
         top += {'top'   : 0,
-                'center': remaining_height/2,
+                'center': remaining_height // 2,
                 'bottom': remaining_height
                }[align_ver]
 
         left += {'left'  : 0,
-                 'center': remaining_width/2,
+                 'center': remaining_width // 2,
                  'right' : remaining_width
                 }[align_hor]
 

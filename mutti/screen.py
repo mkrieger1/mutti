@@ -23,8 +23,8 @@ class Screen(Panel):
         c = self.children[1]
         w = max(ch.min_width for ch in self.children)
         h = min(c.min_height, height-1)
-        top = max((height-h)/2, 0)
-        left = max((width-w)/2, 0)
+        top = max((height-h) // 2, 0)
+        left = max((width-w) // 2, 0)
         c.give_window(height=h, width=w, top=top, left=left)
         self.statusbar.give_window(height=1, width=w, top=h+top, left=left)
 
