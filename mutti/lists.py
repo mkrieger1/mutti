@@ -1,7 +1,7 @@
 import curses
 import curses.ascii
-from panel import Panel
-from util import distribute_space
+from .panel import Panel
+from .util import distribute_space
 
 #--------------------------------------------------------------------
 

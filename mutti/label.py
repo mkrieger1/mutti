@@ -1,6 +1,6 @@
 import curses
-from panel import Panel
-from util import shorten_label
+from .panel import Panel
+from .util import shorten_label
 
 
 class Label(Panel):

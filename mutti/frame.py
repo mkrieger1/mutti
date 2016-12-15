@@ -1,5 +1,5 @@
 import curses
-from panel import Panel
+from .panel import Panel
 
 
 class Frame(Panel):

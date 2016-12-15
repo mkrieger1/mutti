@@ -1,6 +1,6 @@
-from panel import Panel, ExitLoop
-from status import Status
-from colors import color_attr
+from .panel import Panel, ExitLoop
+from .status import Status
+from .colors import color_attr
 
 class Screen(Panel):
     _max_children = 2 # one of them is the statusbar
@@ -39,7 +39,7 @@ class Screen(Panel):
         pass
 
     def _handle_key(self, key):
-        if key in map(ord, 'qQ'):
+        if key in list(map(ord, 'qQ')):
             self._on_exit()
             raise ExitLoop
         else:

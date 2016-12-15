@@ -17,7 +17,7 @@ def show_colors(stdscr, attr):
           "color pair %i" % i, (attr<<16)|curses.color_pair(i))
 
 def show_attr(stdscr, offset):
-    attrs = [(x, name) for (name, x) in curses.__dict__.iteritems()
+    attrs = [(x, name) for (name, x) in curses.__dict__.items()
                        if (name.startswith("A_") and
                            (x==0 or (x>0xFFFF and x<0x1000000)))]
     for (i, (x, name)) in enumerate(sorted(attrs)):
@@ -43,7 +43,7 @@ def main(stdscr):
         key = stdscr.getch()
         if key == ord('q'):
             break
-        elif key in map(ord, '01234567'):
+        elif key in list(map(ord, '01234567')):
             attr ^= (1<<int(chr(key)))
 
 

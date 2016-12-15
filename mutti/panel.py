@@ -72,7 +72,7 @@ class Panel:
         Write text to log file (must be provided in advance).
         """
         try:
-            print >> self._log, str(self), " ".join(map(str, text))
+            print(str(self), " ".join(map(str, text)), file=self._log)
             self._log.flush()
         except:
             pass
@@ -325,7 +325,7 @@ class Panel:
         i = self.focus_idx + amount
 
         while True:
-            if i not in range(len(self.children)):
+            if i not in list(range(len(self.children))):
                 return False
             elif self._move_focus_to(i):
                 return True

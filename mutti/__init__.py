@@ -1,13 +1,13 @@
-from align  import HAlign, VAlign
-from dial   import Dial
-from frame  import Frame
-from grid   import Grid
-from label  import Label
-from lists  import HList, VList
-from screen import Screen
-from space  import HSpace, VSpace
-from tabs   import Tabs
-from toggle import Toggle
+from .align  import HAlign, VAlign
+from .dial   import Dial
+from .frame  import Frame
+from .grid   import Grid
+from .label  import Label
+from .lists  import HList, VList
+from .screen import Screen
+from .space  import HSpace, VSpace
+from .tabs   import Tabs
+from .toggle import Toggle
 
 del align 
 del dial  

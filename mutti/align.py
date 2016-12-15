@@ -1,4 +1,4 @@
-from panel import Panel
+from .panel import Panel
 
 class _Align(Panel):
     _max_children = 1

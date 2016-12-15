@@ -1,7 +1,7 @@
 import curses
 import curses.ascii
-from panel import Panel
-from util import distribute_space
+from .panel import Panel
+from .util import distribute_space
 
 class Grid(Panel):
     """
@@ -61,8 +61,8 @@ class Grid(Panel):
         while True:
             row += ver
             col += hor
-            if (row not in range(self._rows) or
-                col not in range(self._columns)):
+            if (row not in list(range(self._rows)) or
+                col not in list(range(self._columns))):
                 return False
             for (i, c) in enumerate(self.children):
                 if self._pos[c] == (row, col):

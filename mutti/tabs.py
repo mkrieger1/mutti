@@ -1,8 +1,8 @@
 import curses
 import curses.ascii
-from panel import Panel
-from util import distribute_space, shorten_label
-from colors import color_attr
+from .panel import Panel
+from .util import distribute_space, shorten_label
+from .colors import color_attr
 
 
 class Tabs(Panel):
@@ -27,11 +27,11 @@ class Tabs(Panel):
     #--------------------------------------------------------------------
 
     def _handle_key(self, key):
-        if key in map(ord, '123456789'):
+        if key in list(map(ord, '123456789')):
             i = int(chr(key))-1
-        elif key in map(ord, 'tW'):
+        elif key in list(map(ord, 'tW')):
             i = (self.focus_idx + 1) % len(self.children)
-        elif key in map(ord, 'TB'):
+        elif key in list(map(ord, 'TB')):
             i = (self.focus_idx - 1) % len(self.children)
         else:
             return key

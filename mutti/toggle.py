@@ -1,8 +1,8 @@
 import curses
 import curses.ascii
-from panel import Panel
-from colors import color_attr
-from util import shorten_label
+from .panel import Panel
+from .colors import color_attr
+from .util import shorten_label
 
 
 class Toggle(Panel):
